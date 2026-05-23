@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voltpath — Learn the Trade</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ─────────────────────────────────────────────── */
+:root {
+  --bg:       #F7F3ED;
+  --surface:  #FFFFFF;
+  --border:   #E0D9CF;
+  --amber:    #F5A623;
+  --amber-dk: #C97F00;
+  --amber-lt: #FEF3DC;
+  --teal:     #00B896;
+  --teal-lt:  #D6F5EF;
+  --red:      #E84040;
+  --red-lt:   #FDEAEA;
+  --blue:     #3B82F6;
+  --blue-lt:  #EEF4FF;
+  --text:     #1A1A1A;
+  --text-2:   #6B6560;
+  --text-3:   #A09890;
+  --radius:   16px;
+  --radius-sm:10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+/* ── PASSWORD GATE ───────────────────────────────────────── */
+#password-gate {
+  position: fixed;
+  inset: 0;
+  background: #F7F3ED;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 32px 28px;
+  font-family: 'DM Sans', sans-serif;
+}
+#password-gate.hidden { display: none; }
+.gate-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  letter-spacing: .08em;
+  color: #1A1A1A;
+  margin-bottom: 6px;
+}
+.gate-logo span { color: #F5A623; }
+.gate-sub {
+  font-size: 13px;
+  color: #6B6560;
+  margin-bottom: 32px;
+  text-align: center;
+}
+.gate-input {
+  width: 100%;
+  max-width: 260px;
+  background: #fff;
+  border: 2px solid #E0D9CF;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 22px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .3em;
+  text-align: center;
+  color: #1A1A1A;
+  outline: none;
+  transition: border-color .2s;
+  margin-bottom: 12px;
+}
+.gate-input:focus { border-color: #F5A623; }
+.gate-input.shake {
+  animation: shake .35s ease;
+  border-color: #E84040;
+  background: #FDEAEA;
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-5px); }
+  80%      { transform: translateX(5px); }
+}
+.gate-btn {
+  width: 100%;
+  max-width: 260px;
+  background: #F5A623;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .04em;
+  box-shadow: 0 4px 0 #C97F00;
+  font-family: 'DM Sans', sans-serif;
+  transition: transform .1s, box-shadow .1s;
+}
+.gate-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #C97F00; }
+.gate-error {
+  font-size: 12px;
+  color: #E84040;
+  margin-top: 10px;
+  height: 16px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .04em;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  max-width: 430px;
+  margin: 0 auto;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── SCREEN SYSTEM ──────────────────────────────────────── */
+.screen { display: none; }
+.screen.active { display: flex; flex-direction: column; min-height: 100vh; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: slideUp .28s ease forwards; }
+
+/* ── HOME SCREEN ────────────────────────────────────────── */
+.home-header {
+  background: var(--surface);
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.home-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: .08em;
+  color: var(--text);
+}
+.logo span { color: var(--amber); }
+
+.streak-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--amber-lt);
+  border: 1.5px solid var(--amber);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--amber-dk);
+  font-family: 'DM Mono', monospace;
+}
+
+/* XP bar */
+.xp-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.xp-label {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.xp-track {
+  flex: 1;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.xp-fill {
+  height: 100%;
+  background: var(--amber);
+  border-radius: 4px;
+  width: 34%;
+  transition: width .6s ease;
+}
+.xp-val {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+/* Skill path */
+.skill-path {
+  padding: 20px;
+  flex: 1;
+}
+
+.path-section-label {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+/* Skill nodes — staggered like Duolingo */
+.skill-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.skill-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.skill-node:nth-child(even) { transform: translateX(60px); }
+.skill-node:nth-child(3n)   { transform: translateX(-40px); }
+
+.node-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border: 3px solid transparent;
+  transition: transform .15s, box-shadow .15s;
+  position: relative;
+}
+.node-circle:active { transform: scale(.93); }
+
+.node-done   { background: var(--teal);    border-color: #009977; box-shadow: 0 4px 0 #009977; }
+.node-active { background: var(--amber);   border-color: var(--amber-dk); box-shadow: 0 4px 0 var(--amber-dk); }
+.node-locked { background: #E8E2DA;        border-color: #CFC8BF; box-shadow: 0 4px 0 #CFC8BF; filter: grayscale(.5); }
+
+.node-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  text-align: center;
+  max-width: 80px;
+  line-height: 1.3;
+}
+.node-active + .node-label { color: var(--text); }
+
+/* Connector lines */
+.skill-connector {
+  width: 3px;
+  height: 20px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: -4px auto;
+}
+
+/* START button */
+.start-btn-wrap {
+  padding: 16px 20px 32px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  position: sticky;
+  bottom: 0;
+}
+
+.start-btn {
+  width: 100%;
+  background: var(--amber);
+  border: none;
+  border-radius: var(--radius);
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .04em;
+  box-shadow: 0 4px 0 var(--amber-dk);
+  transition: transform .1s, box-shadow .1s;
+  font-family: 'DM Sans', sans-serif;
+}
+.start-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--amber-dk);
+}
+
+/* ── LESSON SCREEN ──────────────────────────────────────── */
+.lesson-header {
+  background: var(--surface);
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-3);
+  padding: 2px;
+  line-height: 1;
+}
+
+.progress-track {
+  flex: 1;
+  height: 10px;
+  background: var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--amber);
+  border-radius: 5px;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+
+.hearts {
+  font-size: 15px;
+  font-family: 'DM Mono', monospace;
+  color: var(--red);
+  font-weight: 600;
+}
+
+/* Question area */
+.question-area {
+  flex: 1;
+  padding: 28px 20px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.q-type-label {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+
+.q-text {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.q-sub {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-bottom: 28px;
+  font-style: italic;
+}
+
+/* Answer options */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: auto;
+}
+
+.option-btn {
+  width: 100%;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color .15s, background .15s, transform .1s;
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.4;
+}
+.option-btn:active { transform: scale(.98); }
+.option-btn:hover:not(:disabled) { border-color: var(--amber); background: var(--amber-lt); }
+
+.option-key {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-family: 'DM Mono', monospace;
+  font-weight: 600;
+  color: var(--text-2);
+  flex-shrink: 0;
+}
+
+.option-btn.selected    { border-color: var(--blue); background: var(--blue-lt); }
+.option-btn.selected .option-key { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+.option-btn.correct     { border-color: var(--teal); background: var(--teal-lt); }
+.option-btn.correct .option-key { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+.option-btn.wrong       { border-color: var(--red); background: var(--red-lt); }
+.option-btn.wrong .option-key  { background: var(--red); color: #fff; border-color: var(--red); }
+
+.option-btn:disabled { cursor: default; }
+
+/* Fill in blank */
+.fill-input {
+  width: 100%;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color .15s;
+}
+.fill-input:focus { border-color: var(--amber); }
+.fill-input.correct { border-color: var(--teal); background: var(--teal-lt); }
+.fill-input.wrong   { border-color: var(--red);  background: var(--red-lt); }
+
+/* True / False */
+.tf-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tf-btn {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: all .15s;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+}
+.tf-btn:active { transform: scale(.96); }
+.tf-btn .tf-icon { font-size: 28px; }
+.tf-btn.selected { border-color: var(--blue); background: var(--blue-lt); }
+.tf-btn.correct  { border-color: var(--teal); background: var(--teal-lt); }
+.tf-btn.wrong    { border-color: var(--red);  background: var(--red-lt); }
+.tf-btn:disabled { cursor: default; }
+
+/* Scenario card */
+.scenario-card {
+  background: var(--amber-lt);
+  border: 1.5px solid var(--amber);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.scenario-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+.scenario-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+
+/* ── FEEDBACK BANNER ────────────────────────────────────── */
+.feedback-panel {
+  position: fixed;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  padding: 20px 20px 32px;
+  border-top: 2px solid transparent;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 200;
+  animation: slideUp .22s ease;
+}
+.feedback-panel.correct-panel { background: var(--teal-lt); border-color: var(--teal); }
+.feedback-panel.wrong-panel   { background: var(--red-lt);  border-color: var(--red); }
+
+.fb-row { display: flex; align-items: center; gap: 10px; }
+.fb-icon { font-size: 24px; }
+.fb-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+.correct-panel .fb-title { color: var(--teal); }
+.wrong-panel   .fb-title { color: var(--red); }
+
+.fb-explanation {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+.fb-explanation strong { color: var(--text); }
+
+.fb-btn {
+  width: 100%;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: .03em;
+  transition: opacity .15s;
+}
+.fb-btn:hover { opacity: .9; }
+.correct-panel .fb-btn { background: var(--teal); color: #fff; box-shadow: 0 3px 0 #009977; }
+.wrong-panel   .fb-btn { background: var(--red);  color: #fff; box-shadow: 0 3px 0 #b02020; }
+
+.check-btn {
+  width: 100%;
+  background: var(--border);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 15px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-3);
+  cursor: not-allowed;
+  margin-top: 20px;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
+}
+.check-btn.ready {
+  background: var(--amber);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--amber-dk);
+}
+.check-btn.ready:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--amber-dk);
+}
+
+/* ── RESULTS SCREEN ─────────────────────────────────────── */
+.results-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 28px;
+  text-align: center;
+  background: var(--bg);
+}
+
+.result-trophy { font-size: 72px; margin-bottom: 16px; animation: bounce .6s ease; }
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+.result-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px;
+  letter-spacing: .06em;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.result-sub { font-size: 15px; color: var(--text-2); margin-bottom: 32px; line-height: 1.5; }
+
+.result-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.result-stat {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 10px;
+}
+.result-stat-n {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.result-stat-l {
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.xp-earned {
+  background: var(--amber-lt);
+  border: 1.5px solid var(--amber);
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--amber-dk);
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.result-home-btn {
+  width: 100%;
+  background: var(--amber);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--amber-dk);
+  font-family: 'DM Sans', sans-serif;
+  transition: transform .1s, box-shadow .1s;
+}
+.result-home-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--amber-dk);
+}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="password-gate">
+  <div class="gate-logo">⚡ <span>VOLT</span>PATH</div>
+  <div class="gate-sub">Enter the access code to continue</div>
+  <input class="gate-input" id="gate-input" type="password" maxlength="6" placeholder="····" onkeydown="if(event.key==='Enter') checkPassword()" oninput="document.getElementById('gate-error').textContent=''" autofocus>
+  <button class="gate-btn" onclick="checkPassword()">ENTER</button>
+  <div class="gate-error" id="gate-error"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN: HOME
+═══════════════════════════════════════════════════════ -->
+<div id="screen-home" class="screen active">
+
+  <div class="home-header">
+    <div class="home-top">
+      <div class="logo">⚡ <span>VOLT</span>PATH</div>
+      <div class="streak-chip">🔥 4</div>
+    </div>
+    <div class="xp-row">
+      <span class="xp-label">XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill"></div></div>
+      <span class="xp-val" id="xp-val">340 / 1000</span>
+    </div>
+  </div>
+
+  <div class="skill-path">
+    <div class="path-section-label">Unit 1 · NEC Fundamentals</div>
+
+    <div class="skill-col">
+
+      <div class="skill-node" onclick="startLesson('basics')">
+        <div class="node-circle node-done">⚡</div>
+        <div class="node-label">What is the NEC?</div>
+      </div>
+      <div class="skill-connector"></div>
+
+      <div class="skill-node" onclick="startLesson('basics')">
+        <div class="node-circle node-done">📖</div>
+        <div class="node-label">Article 100 Definitions</div>
+      </div>
+      <div class="skill-connector"></div>
+
+      <div class="skill-node" onclick="startLesson('gfci')">
+        <div class="node-circle node-active">🔌</div>
+        <div class="node-label">GFCI &amp; Branch Circuits</div>
+      </div>
+      <div class="skill-connector"></div>
+
+      <div class="skill-node">
+        <div class="node-circle node-locked">🔒</div>
+        <div class="node-label">Grounding &amp; Bonding</div>
+      </div>
+      <div class="skill-connector"></div>
+
+      <div class="skill-node">
+        <div class="node-circle node-locked">🔒</div>
+        <div class="node-label">Conduit Fill</div>
+      </div>
+      <div class="skill-connector"></div>
+
+      <div class="skill-node">
+        <div class="node-circle node-locked">🔒</div>
+        <div class="node-label">Load Calculations</div>
+      </div>
+
+    </div>
+
+    <div class="path-section-label" style="margin-top:8px">Unit 2 · On The Job · Locked</div>
+    <div class="skill-col" style="opacity:.4; pointer-events:none">
+      <div class="skill-node">
+        <div class="node-circle node-locked">🔒</div>
+        <div class="node-label">Reading Blueprints</div>
+      </div>
+      <div class="skill-connector"></div>
+      <div class="skill-node">
+        <div class="node-circle node-locked">🔒</div>
+        <div class="node-label">Panel Sizing</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="start-btn-wrap">
+    <button class="start-btn" onclick="startLesson('gfci')">START TODAY'S LESSON →</button>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN: LESSON
+═══════════════════════════════════════════════════════ -->
+<div id="screen-lesson" class="screen">
+
+  <div class="lesson-header">
+    <button class="close-btn" onclick="goHome()">✕</button>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="hearts" id="hearts-display">❤️ 3</div>
+  </div>
+
+  <div class="question-area" id="question-area">
+    <!-- Injected by JS -->
+  </div>
+
+  <div class="feedback-panel" id="feedback-panel">
+    <div class="fb-row">
+      <span class="fb-icon" id="fb-icon"></span>
+      <span class="fb-title" id="fb-title"></span>
+    </div>
+    <div class="fb-explanation" id="fb-explanation"></div>
+    <button class="fb-btn" id="fb-btn" onclick="nextQuestion()">CONTINUE</button>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN: RESULTS
+═══════════════════════════════════════════════════════ -->
+<div id="screen-results" class="screen">
+  <div class="results-screen animate-in">
+    <div class="result-trophy" id="result-trophy">🏆</div>
+    <div class="result-title" id="result-title">LESSON COMPLETE!</div>
+    <div class="result-sub" id="result-sub">You're building real knowledge. Keep it up.</div>
+
+    <div class="result-stats">
+      <div class="result-stat">
+        <div class="result-stat-n" style="color:var(--teal)" id="stat-correct">0</div>
+        <div class="result-stat-l">Correct</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-n" style="color:var(--amber)" id="stat-streak">0</div>
+        <div class="result-stat-l">Streak</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-n" style="color:var(--text-2)" id="stat-accuracy">0%</div>
+        <div class="result-stat-l">Accuracy</div>
+      </div>
+    </div>
+
+    <div class="xp-earned" id="xp-earned">+0 XP earned</div>
+
+    <button class="result-home-btn" onclick="goHome()">BACK TO HOME</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     QUESTIONS DATA
+     ── Add new questions here. Types:
+        mc   — multiple choice (options array)
+        tf   — true / false
+        fill — fill in the blank (answer string, loose match)
+        scenario — mc with a job site scenario card
+═══════════════════════════════════════════════════════ -->
+<script>
+const LESSONS = {
+
+  gfci: {
+    title: "GFCI & Branch Circuits",
+    questions: [
+
+      {
+        type: "tf",
+        question: "All bathroom receptacles must have GFCI protection.",
+        answer: true,
+        explanation: "<strong>True — NEC 210.8(A)(1)</strong> requires GFCI protection for all receptacles in bathrooms. There's no exception based on distance from the sink."
+      },
+
+      {
+        type: "mc",
+        question: "Which NEC article covers branch circuit requirements for kitchens and bathrooms?",
+        options: ["Article 100", "Article 210", "Article 250", "Article 110"],
+        answer: 1,
+        explanation: "<strong>Article 210</strong> covers branch circuits — including GFCI requirements for kitchens, bathrooms, garages, outdoors, and more."
+      },
+
+      {
+        type: "scenario",
+        scenario: "You're wiring a new bathroom. The homeowner wants to save money and skip the GFCI outlet since 'the sink is far away.'",
+        question: "What do you tell them?",
+        options: [
+          "Agree — if it's more than 6 feet from the sink it's fine",
+          "GFCI is required for all bathroom receptacles, no exceptions",
+          "Only required if the circuit shares a neutral",
+          "It depends on the local amendment"
+        ],
+        answer: 1,
+        explanation: "<strong>NEC 210.8(A)(1)</strong> requires GFCI protection for ALL bathroom receptacles — the 6-foot rule applies to kitchens, not bathrooms. Bathroom is always GFCI, full stop."
+      },
+
+      {
+        type: "fill",
+        question: "A GFCI outlet has two sets of terminals: LINE and ___.",
+        answer: "load",
+        hint: "Wiring downstream outlets here gives them GFCI protection too.",
+        explanation: "The <strong>LOAD</strong> terminals on a GFCI outlet protect all downstream outlets on the same circuit. This is how one GFCI can protect a whole bathroom."
+      },
+
+      {
+        type: "mc",
+        question: "Where does the NEC require AFCI protection?",
+        options: [
+          "Bathrooms and kitchens",
+          "Bedrooms only",
+          "Most living areas in dwelling units",
+          "Outdoor receptacles only"
+        ],
+        answer: 2,
+        explanation: "<strong>NEC 210.12</strong> requires AFCI protection in most living areas of dwelling units — including bedrooms, living rooms, hallways, and more. Not bathrooms (those get GFCI)."
+      },
+
+      {
+        type: "tf",
+        question: "A 20-amp branch circuit is required for bathroom receptacles.",
+        answer: true,
+        explanation: "<strong>True — NEC 210.11(C)(3)</strong> requires at least one 20-amp circuit for bathroom receptacles. The 15-amp circuits you use elsewhere aren't enough for hair dryers and curling irons."
+      },
+
+      {
+        type: "scenario",
+        scenario: "You install a GFCI outlet in a bathroom and wire two regular outlets from the LOAD terminals. The inspector tests all three.",
+        question: "What will the inspector find?",
+        options: [
+          "The two downstream outlets will fail — they need their own GFCIs",
+          "All three outlets will pass — LOAD wiring protects them all",
+          "Only the GFCI outlet itself will pass",
+          "The inspector will require tamper-resistant outlets instead"
+        ],
+        answer: 1,
+        explanation: "Correct — wiring from the <strong>LOAD terminals</strong> extends GFCI protection to all downstream outlets. The inspector will see all three as GFCI protected and mark them accordingly."
+      },
+
+      {
+        type: "mc",
+        question: "Which of these locations does NOT require GFCI protection under NEC 210.8?",
+        options: [
+          "Garage receptacles",
+          "Outdoor receptacles",
+          "Bedroom receptacles",
+          "Crawl space receptacles"
+        ],
+        answer: 2,
+        explanation: "<strong>Bedrooms don't require GFCI</strong> — they require AFCI protection instead. GFCI is for wet/damp locations: bathrooms, kitchens, garages, outdoors, crawl spaces, basements, and boathouses."
+      },
+
+    ]
+  },
+
+  basics: {
+    title: "NEC Basics",
+    questions: [
+      {
+        type: "mc",
+        question: "What does NEC stand for?",
+        options: ["National Electrical Code", "National Engineering Checklist", "New Electrical Certification", "National Equipment Compliance"],
+        answer: 0,
+        explanation: "<strong>National Electrical Code</strong> — published by the NFPA (National Fire Protection Association) and updated every 3 years. It's the minimum standard for electrical installations across the US."
+      },
+      {
+        type: "tf",
+        question: "The NEC is a federal law that all states must follow exactly.",
+        answer: false,
+        explanation: "<strong>False.</strong> The NEC is a model code — states and local jurisdictions adopt it voluntarily and can add stricter amendments. That's why code requirements vary by location."
+      },
+      {
+        type: "mc",
+        question: "Where would you look in the NEC to find the definition of 'branch circuit'?",
+        options: ["Article 210", "Article 90", "Article 100", "Chapter 9"],
+        answer: 2,
+        explanation: "<strong>Article 100</strong> is the NEC's definition section. Always check here first when you're unclear on a term — the NEC's definitions are often stricter or more specific than everyday usage."
+      },
+      {
+        type: "fill",
+        question: "The NEC is published by the ___.",
+        answer: "nfpa",
+        hint: "Four-letter acronym. National Fire ___ Association.",
+        explanation: "The <strong>NFPA</strong> (National Fire Protection Association) publishes the NEC. They also publish NFPA 70E (electrical safety in the workplace) and NFPA 101 (life safety code)."
+      },
+    ]
+  }
+
+};
+
+/* ═══════════════════════════════════════════════════════
+   ENGINE
+═══════════════════════════════════════════════════════ */
+let state = {
+  lessonKey: null,
+  questions: [],
+  current: 0,
+  hearts: 3,
+  correct: 0,
+  maxStreak: 0,
+  currentStreak: 0,
+  xp: 340,
+  answered: false,
+  selectedAnswer: null,
+};
+
+function goHome() {
+  showScreen('home');
+  document.getElementById('feedback-panel').style.display = 'none';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function startLesson(key) {
+  const lesson = LESSONS[key];
+  if (!lesson) return;
+  state = {
+    lessonKey: key,
+    questions: shuffle([...lesson.questions]),
+    current: 0,
+    hearts: 3,
+    correct: 0,
+    maxStreak: 0,
+    currentStreak: 0,
+    xp: state.xp,
+    answered: false,
+    selectedAnswer: null,
+  };
+  document.getElementById('feedback-panel').style.display = 'none';
+  showScreen('lesson');
+  renderQuestion();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function renderQuestion() {
+  state.answered = false;
+  state.selectedAnswer = null;
+  const q = state.questions[state.current];
+  const total = state.questions.length;
+
+  // Progress bar
+  document.getElementById('progress-fill').style.width = (state.current / total * 100) + '%';
+  document.getElementById('hearts-display').textContent = '❤️ ' + state.hearts;
+
+  const area = document.getElementById('question-area');
+  area.innerHTML = '';
+  area.classList.remove('animate-in');
+  void area.offsetWidth; // reflow
+  area.classList.add('animate-in');
+
+  const typeLabel = document.createElement('div');
+  typeLabel.className = 'q-type-label';
+  typeLabel.textContent =
+    q.type === 'mc'       ? 'Multiple choice' :
+    q.type === 'tf'       ? 'True or false' :
+    q.type === 'fill'     ? 'Fill in the blank' :
+    q.type === 'scenario' ? 'Job site scenario' : '';
+  area.appendChild(typeLabel);
+
+  // Scenario card
+  if (q.type === 'scenario') {
+    const card = document.createElement('div');
+    card.className = 'scenario-card';
+    card.innerHTML = `<span class="scenario-icon">🏗️</span><div class="scenario-text">${q.scenario}</div>`;
+    area.appendChild(card);
+  }
+
+  const qText = document.createElement('div');
+  qText.className = 'q-text';
+  qText.textContent = q.question;
+  area.appendChild(qText);
+
+  if (q.hint && q.type === 'fill') {
+    const sub = document.createElement('div');
+    sub.className = 'q-sub';
+    sub.textContent = q.hint;
+    area.appendChild(sub);
+  }
+
+  // Render by type
+  if (q.type === 'mc' || q.type === 'scenario') {
+    renderMC(q, area);
+  } else if (q.type === 'tf') {
+    renderTF(q, area);
+  } else if (q.type === 'fill') {
+    renderFill(q, area);
+  }
+
+  // Check button
+  if (q.type === 'fill') {
+    const btn = document.createElement('button');
+    btn.className = 'check-btn';
+    btn.id = 'check-btn';
+    btn.textContent = 'CHECK';
+    btn.onclick = checkFill;
+    area.appendChild(btn);
+  }
+}
+
+function renderMC(q, area) {
+  const opts = document.createElement('div');
+  opts.className = 'options';
+  const keys = ['A', 'B', 'C', 'D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-key">${keys[i]}</span>${opt}`;
+    btn.onclick = () => selectMC(i, q);
+    opts.appendChild(btn);
+  });
+  area.appendChild(opts);
+}
+
+function renderTF(q, area) {
+  const row = document.createElement('div');
+  row.className = 'tf-row';
+  ['TRUE', 'FALSE'].forEach((label, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tf-btn';
+    btn.innerHTML = `<span class="tf-icon">${i === 0 ? '✅' : '❌'}</span>${label}`;
+    btn.onclick = () => selectTF(i === 0, q, btn, row);
+    row.appendChild(btn);
+  });
+  area.appendChild(row);
+}
+
+function renderFill(q, area) {
+  const input = document.createElement('input');
+  input.className = 'fill-input';
+  input.id = 'fill-input';
+  input.type = 'text';
+  input.placeholder = 'Type your answer…';
+  input.setAttribute('autocomplete', 'off');
+  input.oninput = () => {
+    const btn = document.getElementById('check-btn');
+    if (btn) btn.classList.toggle('ready', input.value.trim().length > 0);
+  };
+  input.onkeydown = e => { if (e.key === 'Enter') checkFill(); };
+  area.appendChild(input);
+  setTimeout(() => input.focus(), 200);
+}
+
+function selectMC(idx, q) {
+  if (state.answered) return;
+  state.answered = true;
+  state.selectedAnswer = idx;
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.answer) b.classList.add('correct');
+    else if (i === idx && idx !== q.answer) b.classList.add('wrong');
+  });
+  grade(idx === q.answer, q.explanation);
+}
+
+function selectTF(value, q, clickedBtn, row) {
+  if (state.answered) return;
+  state.answered = true;
+  const correct = value === q.answer;
+  row.querySelectorAll('.tf-btn').forEach(b => b.disabled = true);
+  // Mark correct answer green, wrong answer red
+  row.querySelectorAll('.tf-btn').forEach((b, i) => {
+    const bVal = i === 0; // true btn is index 0
+    if (bVal === q.answer) b.classList.add('correct');
+    else if (b === clickedBtn && !correct) b.classList.add('wrong');
+  });
+  grade(correct, q.explanation);
+}
+
+function checkFill() {
+  if (state.answered) return;
+  const input = document.getElementById('fill-input');
+  if (!input || !input.value.trim()) return;
+  const q = state.questions[state.current];
+  const userVal = input.value.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+  const correctVal = q.answer.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const correct = userVal === correctVal;
+  state.answered = true;
+  input.disabled = true;
+  input.classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) input.value = q.answer; // show correct answer
+  document.getElementById('check-btn')?.remove();
+  grade(correct, q.explanation);
+}
+
+function grade(correct, explanation) {
+  if (correct) {
+    state.correct++;
+    state.currentStreak++;
+    state.maxStreak = Math.max(state.maxStreak, state.currentStreak);
+    state.xp += 15;
+  } else {
+    state.hearts--;
+    state.currentStreak = 0;
+    if (state.hearts <= 0) {
+      setTimeout(() => showResults(true), 1600);
+    }
+  }
+
+  const panel = document.getElementById('feedback-panel');
+  panel.className = 'feedback-panel ' + (correct ? 'correct-panel' : 'wrong-panel');
+  panel.style.display = 'flex';
+  document.getElementById('fb-icon').textContent  = correct ? '🎉' : '💡';
+  document.getElementById('fb-title').textContent = correct ? 'Correct!' : 'Not quite.';
+  document.getElementById('fb-explanation').innerHTML = explanation;
+  document.getElementById('fb-btn').textContent   = correct ? 'CONTINUE' : 'GOT IT';
+
+  // Update XP bar live
+  document.getElementById('xp-fill').style.width = Math.min(state.xp / 1000 * 100, 100) + '%';
+  document.getElementById('xp-val').textContent = state.xp + ' / 1000';
+}
+
+function nextQuestion() {
+  document.getElementById('feedback-panel').style.display = 'none';
+  state.current++;
+  if (state.current >= state.questions.length || state.hearts <= 0) {
+    showResults(false);
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResults(outOfHearts) {
+  document.getElementById('feedback-panel').style.display = 'none';
+  const total = state.questions.length;
+  const answered = state.current + (state.answered ? 1 : 0);
+  const acc = answered > 0 ? Math.round(state.correct / answered * 100) : 0;
+  const xpEarned = state.correct * 15 + (acc === 100 ? 50 : 0);
+
+  document.getElementById('result-trophy').textContent = outOfHearts ? '💔' : acc >= 80 ? '🏆' : '⭐';
+  document.getElementById('result-title').textContent  = outOfHearts ? 'OUT OF HEARTS' : 'LESSON COMPLETE!';
+  document.getElementById('result-sub').textContent    = outOfHearts
+    ? 'No worries — every mistake teaches something. Try again!'
+    : acc === 100
+      ? 'Perfect score! You nailed every single one.'
+      : 'Solid work. Keep building your streak.';
+
+  document.getElementById('stat-correct').textContent  = state.correct;
+  document.getElementById('stat-streak').textContent   = state.maxStreak;
+  document.getElementById('stat-accuracy').textContent = acc + '%';
+  document.getElementById('xp-earned').textContent     = '+' + xpEarned + ' XP earned';
+
+  showScreen('results');
+}
+</script>
+</body>
+</html>
+<script>
+/* ── PASSWORD GATE ─────────────────────────────────────── */
+(function() {
+  // Check if already unlocked this session
+  if (sessionStorage.getItem('vp_unlocked') === 'yes') {
+    document.getElementById('password-gate').classList.add('hidden');
+  }
+})();
+
+function checkPassword() {
+  const input = document.getElementById('gate-input');
+  const val = input.value.trim();
+  if (val === '9988') {
+    sessionStorage.setItem('vp_unlocked', 'yes');
+    const gate = document.getElementById('password-gate');
+    gate.style.opacity = '0';
+    gate.style.transition = 'opacity .3s ease';
+    setTimeout(() => gate.classList.add('hidden'), 300);
+  } else {
+    input.classList.remove('shake');
+    void input.offsetWidth;
+    input.classList.add('shake');
+    input.value = '';
+    document.getElementById('gate-error').textContent = 'Wrong code — try again';
+    setTimeout(() => input.classList.remove('shake'), 400);
+  }
+}
+</script>
