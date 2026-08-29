@@ -1,8 +1,10 @@
-const HOTSPOTS = [
+export const hotspots = [
   {
     id: 'sink-outlet',
     label: 'Standard outlet near sink',
     isViolation: true,
+    explanation:
+      'Outlets within 3 ft of a sink need GFCI protection. A standard outlet here is a shock hazard (NEC 210.8).',
     cx: 208,
     cy: 300,
   },
@@ -10,6 +12,8 @@ const HOTSPOTS = [
     id: 'toilet-junction-box',
     label: 'Open junction box above toilet',
     isViolation: true,
+    explanation:
+      'Junction boxes must stay covered. An open box with exposed splices is a shock and fire hazard (NEC 314.25).',
     cx: 332,
     cy: 150,
   },
@@ -17,6 +21,8 @@ const HOTSPOTS = [
     id: 'door-gfci-outlet',
     label: 'GFCI outlet near door',
     isViolation: false,
+    explanation:
+      'This outlet is GFCI-protected, exactly what a bathroom circuit needs. Nothing to flag here.',
     cx: 40,
     cy: 300,
   },
@@ -24,18 +30,28 @@ const HOTSPOTS = [
     id: 'light-switch',
     label: 'Light switch',
     isViolation: false,
+    explanation:
+      "A standard switch is fine here since it's out of reach of any water source.",
     cx: 40,
     cy: 190,
   },
 ]
 
-function Hotspot({ id, label, isViolation, cx, isFound, cy, onTap }) {
+function Hotspot({ id, label, isViolation, explanation, cx, isFound, cy, onTap }) {
   const found = isFound
+  const tap = () => onTap({ id, label, isViolation, explanation })
   return (
     <g
-      onClick={() => onTap({ id, label, isViolation })}
+      onClick={tap}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          tap()
+        }
+      }}
       style={{ cursor: 'pointer' }}
       role="button"
+      tabIndex={0}
       aria-label={label}
     >
       {/* transparent tap area, larger than the visual so it's easy to hit */}
@@ -205,7 +221,7 @@ export default function Bathroom({ onTap, foundIds = [] }) {
       </g>
 
       {/* ===== interactive hotspots ===== */}
-      {HOTSPOTS.map((h) => (
+      {hotspots.map((h) => (
         <Hotspot key={h.id} {...h} isFound={foundIds.includes(h.id)} onTap={onTap} />
       ))}
     </svg>
