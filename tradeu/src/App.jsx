@@ -3,12 +3,38 @@ import Lesson from './components/Lesson'
 import LessonList from './components/LessonList'
 import { electricalBasicsLesson } from './lessons/electricalBasics'
 import { knowYourWiresLesson } from './lessons/knowYourWires'
+import { gfciAfciLesson } from './lessons/gfciAfci'
+import { loadCompletedLessonIds, saveCompletedLessonIds } from './lib/progress'
 
-const lessons = [electricalBasicsLesson, knowYourWiresLesson]
+const lessons = [electricalBasicsLesson, knowYourWiresLesson, gfciAfciLesson]
 
 function App() {
   const [selectedLessonId, setSelectedLessonId] = useState(null)
+  const [completedLessonIds, setCompletedLessonIds] = useState(() => loadCompletedLessonIds())
+
   const selectedLesson = lessons.find((l) => l.id === selectedLessonId) ?? null
+
+  const lessonsWithStatus = lessons.map((lesson, i) => ({
+    ...lesson,
+    completed: completedLessonIds.includes(lesson.id),
+    // the first lesson is always open; every other one needs the one before it done
+    locked: i > 0 && !completedLessonIds.includes(lessons[i - 1].id),
+  }))
+
+  function handleSelect(lessonId) {
+    const target = lessonsWithStatus.find((l) => l.id === lessonId)
+    if (!target || target.locked) return
+    setSelectedLessonId(lessonId)
+  }
+
+  function handleComplete(lessonId) {
+    setCompletedLessonIds((prev) => {
+      if (prev.includes(lessonId)) return prev
+      const next = [...prev, lessonId]
+      saveCompletedLessonIds(next)
+      return next
+    })
+  }
 
   return (
     <div
@@ -24,9 +50,10 @@ function App() {
             key={selectedLesson.id}
             lesson={selectedLesson}
             onExit={() => setSelectedLessonId(null)}
+            onComplete={handleComplete}
           />
         ) : (
-          <LessonList lessons={lessons} onSelect={setSelectedLessonId} />
+          <LessonList lessons={lessonsWithStatus} onSelect={handleSelect} />
         )}
       </div>
     </div>

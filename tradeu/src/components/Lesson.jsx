@@ -35,7 +35,7 @@ function LessonComplete({ lesson, correct, total, onRestart, onExit }) {
   )
 }
 
-export default function Lesson({ lesson, onExit }) {
+export default function Lesson({ lesson, onExit, onComplete }) {
   const [questionIndex, setQuestionIndex] = useState(0)
   const [foundIds, setFoundIds] = useState([])
   const [activeTap, setActiveTap] = useState(null)
@@ -46,6 +46,7 @@ export default function Lesson({ lesson, onExit }) {
   const question = lesson.questions[questionIndex]
   const isQuiz = question.type === 'quiz'
   const isLastQuestion = questionIndex === lesson.questions.length - 1
+  const QuizVisual = question.visual ?? Outlet
 
   // "inspect" progress
   const totalViolations = !isQuiz ? question.hotspots.filter((h) => h.isViolation).length : 0
@@ -83,6 +84,7 @@ export default function Lesson({ lesson, onExit }) {
     if (isLastQuestion) {
       setResults(nextResults)
       setComplete(true)
+      onComplete?.(lesson.id)
       return
     }
 
@@ -142,7 +144,7 @@ export default function Lesson({ lesson, onExit }) {
             <WireQuestion question={question} selectedOptionId={selectedOptionId} onSelect={handleSelect} />
           ) : (
             <>
-              <Outlet />
+              <QuizVisual />
               <QuizQuestion question={question} selectedOptionId={selectedOptionId} onSelect={handleSelect} />
             </>
           )

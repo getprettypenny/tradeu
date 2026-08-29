@@ -16,21 +16,43 @@ export default function LessonList({ lessons, onSelect }) {
           <button
             key={lesson.id}
             type="button"
+            disabled={lesson.locked}
             onClick={() => onSelect(lesson.id)}
+            aria-disabled={lesson.locked}
             className="text-left rounded-2xl p-4 border transition-colors"
-            style={{ background: '#FFFFFF', borderColor: 'var(--border)' }}
+            style={{
+              background: lesson.locked ? '#F0EBE0' : '#FFFFFF',
+              borderColor: 'var(--border)',
+              opacity: lesson.locked ? 0.65 : 1,
+              cursor: lesson.locked ? 'not-allowed' : 'pointer',
+            }}
           >
-            <p
-              className="text-base font-semibold mb-1"
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-            >
-              {lesson.title}
-            </p>
+            <div className="flex items-center gap-2 mb-1">
+              <p
+                className="text-base font-semibold"
+                style={{ fontFamily: "'Space Grotesk', sans-serif", color: 'var(--ink)' }}
+              >
+                {lesson.title}
+              </p>
+              {lesson.completed && (
+                <span
+                  className="inline-flex items-center justify-center w-5 h-5 rounded-full text-white text-xs font-bold shrink-0"
+                  style={{ background: 'var(--green)' }}
+                >
+                  ✓
+                </span>
+              )}
+              {lesson.locked && (
+                <span className="text-sm shrink-0" style={{ color: 'var(--ink-3)' }}>
+                  🔒
+                </span>
+              )}
+            </div>
             <p className="text-sm mb-2" style={{ color: 'var(--ink-2)' }}>
               {lesson.description}
             </p>
             <p className="text-xs font-medium" style={{ color: 'var(--ink-3)' }}>
-              {lesson.questions.length} questions
+              {lesson.locked ? 'Finish the lesson above to unlock' : `${lesson.questions.length} questions`}
             </p>
           </button>
         ))}
