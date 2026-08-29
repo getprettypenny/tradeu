@@ -1,6 +1,9 @@
+import Hotspot from './Hotspot'
+import { OutletIcon, GfciOutletIcon, SwitchIcon, OpenJunctionBoxIcon } from './fixtures'
+
 export const hotspots = [
   {
-    id: 'sink-outlet',
+    id: 'bathroom-sink-outlet',
     label: 'Standard outlet near sink',
     isViolation: true,
     explanation:
@@ -9,7 +12,7 @@ export const hotspots = [
     cy: 300,
   },
   {
-    id: 'toilet-junction-box',
+    id: 'bathroom-toilet-junction-box',
     label: 'Open junction box above toilet',
     isViolation: true,
     explanation:
@@ -18,7 +21,7 @@ export const hotspots = [
     cy: 150,
   },
   {
-    id: 'door-gfci-outlet',
+    id: 'bathroom-door-gfci-outlet',
     label: 'GFCI outlet near door',
     isViolation: false,
     explanation:
@@ -27,7 +30,7 @@ export const hotspots = [
     cy: 300,
   },
   {
-    id: 'light-switch',
+    id: 'bathroom-light-switch',
     label: 'Light switch',
     isViolation: false,
     explanation:
@@ -37,53 +40,6 @@ export const hotspots = [
   },
 ]
 
-function Hotspot({ id, label, isViolation, explanation, cx, isFound, cy, onTap }) {
-  const found = isFound
-  const tap = () => onTap({ id, label, isViolation, explanation })
-  return (
-    <g
-      onClick={tap}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          tap()
-        }
-      }}
-      style={{ cursor: 'pointer' }}
-      role="button"
-      tabIndex={0}
-      aria-label={label}
-    >
-      {/* transparent tap area, larger than the visual so it's easy to hit */}
-      <circle cx={cx} cy={cy} r={22} fill="transparent" />
-
-      {found && (
-        <circle
-          cx={cx}
-          cy={cy}
-          r={18}
-          fill="none"
-          stroke="var(--green)"
-          strokeWidth={2.5}
-        />
-      )}
-
-      {!found && isViolation && (
-        <circle
-          cx={cx}
-          cy={cy}
-          r={18}
-          fill="none"
-          stroke="var(--red)"
-          strokeWidth={2.5}
-          strokeDasharray="4 3"
-          className="hotspot-pulse"
-        />
-      )}
-    </g>
-  )
-}
-
 export default function Bathroom({ onTap, foundIds = [] }) {
   return (
     <svg
@@ -91,18 +47,6 @@ export default function Bathroom({ onTap, foundIds = [] }) {
       className="w-full h-auto select-none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <style>
-        {`
-          @keyframes hotspot-dash {
-            from { stroke-dashoffset: 0; }
-            to { stroke-dashoffset: -14; }
-          }
-          .hotspot-pulse {
-            animation: hotspot-dash 1s linear infinite;
-          }
-        `}
-      </style>
-
       {/* ceiling */}
       <rect x="0" y="0" width="400" height="34" fill="#EAE3D5" stroke="var(--border)" strokeWidth="1" />
 
@@ -189,36 +133,10 @@ export default function Bathroom({ onTap, foundIds = [] }) {
       <ellipse cx="333" cy="292" rx="24" ry="12" fill="none" stroke="var(--ink-2)" strokeWidth="2" />
 
       {/* ===== hotspot fixtures (visuals) ===== */}
-      {/* standard outlet near sink */}
-      <g>
-        <rect x="198" y="291" width="20" height="28" rx="2" fill="#FBF8F2" stroke="var(--ink-2)" strokeWidth="1.5" />
-        <rect x="202" y="296" width="3" height="7" fill="var(--ink-2)" />
-        <rect x="211" y="296" width="3" height="7" fill="var(--ink-2)" />
-        <circle cx="208" cy="311" r="1.6" fill="var(--ink-2)" />
-      </g>
-
-      {/* open junction box above toilet, no cover plate */}
-      <g>
-        <circle cx="332" cy="150" r="10" fill="none" stroke="var(--ink-2)" strokeWidth="2" />
-        <path d="M 332 150 L 322 142" stroke="var(--yellow)" strokeWidth="1.5" />
-        <path d="M 332 150 L 340 141" stroke="var(--ink)" strokeWidth="1.5" />
-        <path d="M 332 150 L 338 159" stroke="var(--red)" strokeWidth="1.5" />
-      </g>
-
-      {/* GFCI outlet near door */}
-      <g>
-        <rect x="30" y="291" width="20" height="28" rx="2" fill="#FBF8F2" stroke="var(--ink-2)" strokeWidth="1.5" />
-        <rect x="33" y="295" width="6" height="4" fill="var(--blue)" />
-        <rect x="41" y="295" width="6" height="4" fill="var(--red)" />
-        <rect x="34" y="303" width="3" height="7" fill="var(--ink-2)" />
-        <rect x="43" y="303" width="3" height="7" fill="var(--ink-2)" />
-      </g>
-
-      {/* light switch */}
-      <g>
-        <rect x="30" y="181" width="20" height="28" rx="2" fill="#FBF8F2" stroke="var(--ink-2)" strokeWidth="1.5" />
-        <rect x="36" y="188" width="8" height="14" rx="1.5" fill="var(--ink-3)" stroke="var(--ink-2)" strokeWidth="1" />
-      </g>
+      <OutletIcon x={198} y={291} />
+      <OpenJunctionBoxIcon cx={332} cy={150} />
+      <GfciOutletIcon x={30} y={291} />
+      <SwitchIcon x={30} y={181} />
 
       {/* ===== interactive hotspots ===== */}
       {hotspots.map((h) => (

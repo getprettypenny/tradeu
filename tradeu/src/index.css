@@ -28,3 +28,16 @@ body {
   margin: 0;
   min-height: 100vh;
 }
+
+/* shared by every scene's violation hotspots */
+@keyframes hotspot-dash {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+.hotspot-pulse {
+  animation: hotspot-dash 1s linear infinite;
+}
