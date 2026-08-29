@@ -4,36 +4,54 @@ export const knowYourWiresLesson = {
   description: 'Quick-fire questions on wire colors, voltage, and gauge.',
   questions: [
     {
-      id: 'ground-wire',
+      id: 'outlet-voltage',
       type: 'quiz',
-      jobLabel: 'Wire Colors',
-      narrative: 'Before you touch a single wire, get the basics down cold.',
-      prompt: 'Which wire is the grounding conductor?',
+      jobLabel: 'Voltage',
+      narrative: 'Start with something every house has.',
+      prompt: "What's the standard voltage for a household outlet in the US?",
       options: [
-        { id: 'black', label: 'Black' },
-        { id: 'white', label: 'White' },
-        { id: 'green', label: 'Green or bare copper' },
-        { id: 'red', label: 'Red' },
+        { id: '12', label: '12V' },
+        { id: '120', label: '120V' },
+        { id: '240', label: '240V' },
+        { id: '480', label: '480V' },
       ],
-      correctOptionId: 'green',
+      correctOptionId: '120',
       explanation:
-        'Green or bare copper carries the safety ground back to the panel and into the earth — it shouldn\'t carry current under normal conditions.',
+        'Most general household outlets run 120V. Big appliances like dryers, ranges, and AC units usually need 240V.',
     },
     {
       id: 'hot-wire',
       type: 'quiz',
+      interaction: 'wires',
       jobLabel: 'Wire Colors',
-      narrative: "Same panel, next question — don't get comfortable.",
-      prompt: "Which wire is \"hot\" — energized and able to shock you?",
+      narrative: "Now let's open one up. Tap the wire that answers each question.",
+      prompt: 'Which wire is "hot" — energized and able to shock you?',
       options: [
-        { id: 'white', label: 'White' },
-        { id: 'green', label: 'Green' },
-        { id: 'black', label: 'Black' },
-        { id: 'bare', label: 'Bare copper' },
+        { id: 'white', label: 'White', shortLabel: 'White', color: '#DCD5C4' },
+        { id: 'green', label: 'Green', shortLabel: 'Green', color: 'var(--green)' },
+        { id: 'black', label: 'Black', shortLabel: 'Black', color: '#1A1A1A' },
+        { id: 'bare', label: 'Bare copper', shortLabel: 'Bare', color: '#B5824B' },
       ],
       correctOptionId: 'black',
       explanation:
         "Black is the classic hot wire (red and blue show up too on multi-wire circuits). Always treat it as live until you've tested it yourself.",
+    },
+    {
+      id: 'ground-wire',
+      type: 'quiz',
+      interaction: 'wires',
+      jobLabel: 'Wire Colors',
+      narrative: 'Same box, next wire.',
+      prompt: 'Which wire is the grounding conductor?',
+      options: [
+        { id: 'black', label: 'Black', shortLabel: 'Black', color: '#1A1A1A' },
+        { id: 'white', label: 'White', shortLabel: 'White', color: '#DCD5C4' },
+        { id: 'green', label: 'Green or bare copper', shortLabel: 'Green', color: 'var(--green)' },
+        { id: 'red', label: 'Red', shortLabel: 'Red', color: 'var(--red)' },
+      ],
+      correctOptionId: 'green',
+      explanation:
+        "Green or bare copper carries the safety ground back to the panel and into the earth — it shouldn't carry current under normal conditions.",
     },
     {
       id: 'grounded-conductor',
@@ -50,22 +68,6 @@ export const knowYourWiresLesson = {
       correctOptionId: 'neutral',
       explanation:
         "Confusing but true — the white \"grounded conductor\" is what everyone calls the neutral. It's not the same as the green ground wire, even though both eventually bond at the panel.",
-    },
-    {
-      id: 'outlet-voltage',
-      type: 'quiz',
-      jobLabel: 'Voltage',
-      narrative: 'Switching gears — voltage basics.',
-      prompt: "What's the standard voltage for a household outlet in the US?",
-      options: [
-        { id: '12', label: '12V' },
-        { id: '120', label: '120V' },
-        { id: '240', label: '240V' },
-        { id: '480', label: '480V' },
-      ],
-      correctOptionId: '120',
-      explanation:
-        'Most general household outlets run 120V. Big appliances like dryers, ranges, and AC units usually need 240V.',
     },
     {
       id: 'wire-gauge',

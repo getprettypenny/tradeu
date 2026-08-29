@@ -2,6 +2,8 @@ import { useState } from 'react'
 import LessonProgressBar from './LessonProgressBar'
 import FeedbackSheet from './FeedbackSheet'
 import QuizQuestion from './QuizQuestion'
+import WireQuestion from './WireQuestion'
+import Outlet from './scenes/Outlet'
 
 function LessonComplete({ lesson, correct, total, onRestart, onExit }) {
   return (
@@ -136,7 +138,14 @@ export default function Lesson({ lesson, onExit }) {
         </p>
 
         {isQuiz ? (
-          <QuizQuestion question={question} selectedOptionId={selectedOptionId} onSelect={handleSelect} />
+          question.interaction === 'wires' ? (
+            <WireQuestion question={question} selectedOptionId={selectedOptionId} onSelect={handleSelect} />
+          ) : (
+            <>
+              <Outlet />
+              <QuizQuestion question={question} selectedOptionId={selectedOptionId} onSelect={handleSelect} />
+            </>
+          )
         ) : (
           <>
             <Scene onTap={handleTap} foundIds={foundIds} />
