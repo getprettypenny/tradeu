@@ -43,8 +43,15 @@ function App() {
         </header>
 
         <main className="flex-1 px-4 pb-6 flex flex-col">
+          <p
+            className="text-xs font-semibold uppercase tracking-wide mb-1"
+            style={{ color: 'var(--ink-3)' }}
+          >
+            Job: Bathroom Install
+          </p>
           <p className="text-sm mb-3" style={{ color: 'var(--ink-2)' }}>
-            Tap anything on the wall that looks off to code.
+            You just wired this bathroom. Walk through your own work before
+            the inspector does — tap anything that might fail code.
           </p>
 
           <Bathroom onTap={handleTap} foundIds={foundIds} />
@@ -54,7 +61,7 @@ function App() {
               className="mt-4 rounded-xl p-4 text-sm"
               style={{ background: '#EAF7EE', color: 'var(--green)', border: '1px solid var(--green)' }}
             >
-              🎉 Nice work — you caught every violation in this bathroom.
+              🎉 Clean job — you caught every violation. This passes inspection.
             </div>
           )}
         </main>
