@@ -11,7 +11,7 @@ export default function FeedbackSheet({ hotspot, onClose }) {
       <button
         type="button"
         aria-label="Dismiss"
-        className="absolute inset-0 bg-black/40"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
 
