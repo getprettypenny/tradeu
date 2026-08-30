@@ -44,3 +44,24 @@ export function saveBolts(count) {
     // storage unavailable — bolt count just won't persist this session
   }
 }
+
+// Whether the "more lessons" signup form (shown after every current
+// lesson is complete) has already been submitted, so it doesn't nag
+// a returning visitor who already signed up.
+const SIGNUP_KEY = 'tradeu:signup-submitted'
+
+export function loadSignupSubmitted() {
+  try {
+    return localStorage.getItem(SIGNUP_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
+export function saveSignupSubmitted() {
+  try {
+    localStorage.setItem(SIGNUP_KEY, 'true')
+  } catch {
+    // storage unavailable — will just be asked again next visit
+  }
+}

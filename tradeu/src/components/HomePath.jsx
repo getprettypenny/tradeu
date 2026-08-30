@@ -52,7 +52,7 @@ function PlugBadge({ state }) {
   )
 }
 
-export default function HomePath({ lessons, onSelect, bolts }) {
+export default function HomePath({ lessons, onSelect, bolts, footer }) {
   const height = NODE_Y_START + (lessons.length - 1) * NODE_Y_GAP + 100
 
   return (
@@ -122,6 +122,8 @@ export default function HomePath({ lessons, onSelect, bolts }) {
           )
         })}
       </div>
+
+      {footer}
     </div>
   )
 }
