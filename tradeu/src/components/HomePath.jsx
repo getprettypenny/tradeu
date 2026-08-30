@@ -1,3 +1,5 @@
+import BoltCounter from './BoltCounter'
+
 const NODE_Y_START = 40
 const NODE_Y_GAP = 148
 const X_PATTERN = [50, 28, 72] // percentages — center, left, right, repeating
@@ -50,18 +52,21 @@ function PlugBadge({ state }) {
   )
 }
 
-export default function HomePath({ lessons, onSelect }) {
+export default function HomePath({ lessons, onSelect, bolts }) {
   const height = NODE_Y_START + (lessons.length - 1) * NODE_Y_GAP + 100
 
   return (
     <div className="flex-1 flex flex-col overflow-y-auto">
-      <div className="px-5 pt-8 pb-4">
-        <h1 className="text-2xl mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          TradeU
-        </h1>
-        <p className="text-sm" style={{ color: 'var(--ink-2)' }}>
-          Follow the path to level up.
-        </p>
+      <div className="px-5 pt-8 pb-4 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+            TradeU
+          </h1>
+          <p className="text-sm" style={{ color: 'var(--ink-2)' }}>
+            Follow the path to level up.
+          </p>
+        </div>
+        <BoltCounter total={bolts} pulseKey={0} />
       </div>
 
       <div className="relative" style={{ height }}>

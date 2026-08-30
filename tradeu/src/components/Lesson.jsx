@@ -7,35 +7,39 @@ import Outlet from './scenes/Outlet'
 
 function LessonComplete({ lesson, correct, total, onRestart, onExit }) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center text-center px-8 py-10 gap-3">
+    <div className="flex-1 flex flex-col items-center justify-center text-center px-8 py-10 gap-2">
       <div className="text-5xl">🎉</div>
       <h2 className="text-xl font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
         Lesson complete!
       </h2>
+      <div className="flex items-center gap-2 text-2xl font-bold mt-1" style={{ color: '#8A6D00' }}>
+        <span aria-hidden="true">⚡</span>
+        <span>+{correct}</span>
+      </div>
       <p className="text-sm" style={{ color: 'var(--ink-2)' }}>
-        You got {correct}/{total} correct in {lesson.title}.
+        {correct}/{total} correct in {lesson.title}.
       </p>
       <button
         type="button"
-        onClick={onRestart}
+        onClick={onExit}
         className="mt-4 w-full rounded-xl py-3 text-sm font-semibold"
         style={{ background: 'var(--ink)', color: '#fff' }}
       >
-        Do it again
+        Continue
       </button>
       <button
         type="button"
-        onClick={onExit}
+        onClick={onRestart}
         className="w-full rounded-xl py-3 text-sm font-semibold"
         style={{ background: 'transparent', color: 'var(--ink-2)' }}
       >
-        Back to lessons
+        Do it again
       </button>
     </div>
   )
 }
 
-export default function Lesson({ lesson, onExit, onComplete }) {
+export default function Lesson({ lesson, onExit, onComplete, bolts, boltPulse, onEarnBolt }) {
   const [questionIndex, setQuestionIndex] = useState(0)
   const [foundIds, setFoundIds] = useState([])
   const [activeTap, setActiveTap] = useState(null)
@@ -66,12 +70,15 @@ export default function Lesson({ lesson, onExit, onComplete }) {
 
   function handleTap(hotspot) {
     setActiveTap(hotspot)
+    if (foundIds.includes(hotspot.id)) return
     setFoundIds((prev) => (prev.includes(hotspot.id) ? prev : [...prev, hotspot.id]))
+    if (hotspot.isViolation) onEarnBolt?.()
   }
 
   function handleSelect(optionId) {
     if (selectedOptionId !== null) return
     setSelectedOptionId(optionId)
+    if (optionId === question.correctOptionId) onEarnBolt?.()
   }
 
   function handleContinue() {
@@ -126,6 +133,8 @@ export default function Lesson({ lesson, onExit, onComplete }) {
         questionIndex={questionIndex}
         currentRatio={currentRatio}
         onExit={onExit}
+        bolts={bolts}
+        boltPulse={boltPulse}
       />
 
       <main className="flex-1 px-4 pb-4 flex flex-col overflow-y-auto">

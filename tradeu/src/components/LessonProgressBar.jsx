@@ -1,7 +1,16 @@
+import BoltCounter from './BoltCounter'
+
 // Duolingo-style segmented progress bar: one segment per question.
 // Past questions are fully filled, the current one fills proportionally
 // to violations found so far, and future ones stay empty.
-export default function LessonProgressBar({ questionCount, questionIndex, currentRatio, onExit }) {
+export default function LessonProgressBar({
+  questionCount,
+  questionIndex,
+  currentRatio,
+  onExit,
+  bolts,
+  boltPulse,
+}) {
   return (
     <div className="flex items-center gap-3 px-5 pt-6 pb-2">
       <button
@@ -32,6 +41,8 @@ export default function LessonProgressBar({ questionCount, questionIndex, curren
           )
         })}
       </div>
+
+      <BoltCounter total={bolts} pulseKey={boltPulse} />
     </div>
   )
 }

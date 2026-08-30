@@ -4,13 +4,20 @@ import HomePath from './components/HomePath'
 import { electricalBasicsLesson } from './lessons/electricalBasics'
 import { knowYourWiresLesson } from './lessons/knowYourWires'
 import { gfciAfciLesson } from './lessons/gfciAfci'
-import { loadCompletedLessonIds, saveCompletedLessonIds } from './lib/progress'
+import {
+  loadCompletedLessonIds,
+  saveCompletedLessonIds,
+  loadBolts,
+  saveBolts,
+} from './lib/progress'
 
 const lessons = [electricalBasicsLesson, knowYourWiresLesson, gfciAfciLesson]
 
 function App() {
   const [selectedLessonId, setSelectedLessonId] = useState(null)
   const [completedLessonIds, setCompletedLessonIds] = useState(() => loadCompletedLessonIds())
+  const [bolts, setBolts] = useState(() => loadBolts())
+  const [boltPulse, setBoltPulse] = useState(0)
 
   const selectedLesson = lessons.find((l) => l.id === selectedLessonId) ?? null
 
@@ -36,6 +43,15 @@ function App() {
     })
   }
 
+  function handleEarnBolt() {
+    setBolts((prev) => {
+      const next = prev + 1
+      saveBolts(next)
+      return next
+    })
+    setBoltPulse((p) => p + 1)
+  }
+
   return (
     <div
       className="min-h-screen w-full flex justify-center md:py-8 md:px-4"
@@ -51,9 +67,12 @@ function App() {
             lesson={selectedLesson}
             onExit={() => setSelectedLessonId(null)}
             onComplete={handleComplete}
+            bolts={bolts}
+            boltPulse={boltPulse}
+            onEarnBolt={handleEarnBolt}
           />
         ) : (
-          <HomePath lessons={lessonsWithStatus} onSelect={handleSelect} />
+          <HomePath lessons={lessonsWithStatus} onSelect={handleSelect} bolts={bolts} />
         )}
       </div>
     </div>

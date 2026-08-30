@@ -41,3 +41,30 @@ body {
 .hotspot-pulse {
   animation: hotspot-dash 1s linear infinite;
 }
+
+/* BoltCounter's "+1⚡" pop, retriggered by remounting on a fresh key */
+@keyframes bolt-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.85);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -8px) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -28px) scale(1);
+  }
+}
+.bolt-pop {
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #C99400;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: bolt-pop 900ms ease-out forwards;
+}

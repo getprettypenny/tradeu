@@ -22,3 +22,25 @@ export function saveCompletedLessonIds(ids) {
     // storage unavailable — progress just won't persist this session
   }
 }
+
+// Lifetime lightning-bolt count — one per correct answer, across every
+// lesson and every replay. Same guarded persistence pattern as above.
+const BOLTS_KEY = 'tradeu:bolts'
+
+export function loadBolts() {
+  try {
+    const raw = localStorage.getItem(BOLTS_KEY)
+    const n = raw ? Number(raw) : 0
+    return Number.isFinite(n) && n >= 0 ? n : 0
+  } catch {
+    return 0
+  }
+}
+
+export function saveBolts(count) {
+  try {
+    localStorage.setItem(BOLTS_KEY, String(count))
+  } catch {
+    // storage unavailable — bolt count just won't persist this session
+  }
+}
