@@ -1,5 +1,5 @@
 // Decorative breaker panel, shown above every question in the
-// GFCI/AFCI lesson — this lesson is about protection types, not
+// GFCI/AFCI lesson. This lesson is about protection types, not
 // wires, so it gets its own visual identity instead of reusing Outlet.
 export default function BreakerPanel() {
   const breakers = [0, 1, 2, 3]

@@ -1,5 +1,5 @@
 // Shared interactive tap target used by every room scene. Before a tap,
-// every fixture — violation or not — gets the same quiet neutral marker,
+// every fixture, violation or not, gets the same quiet neutral marker,
 // so nothing gives away which ones are wrong. After a tap, the ring
 // reveals the answer: red for a violation, green for up to code.
 export default function Hotspot({ id, label, isViolation, explanation, code, cx, cy, isFound, onTap }) {

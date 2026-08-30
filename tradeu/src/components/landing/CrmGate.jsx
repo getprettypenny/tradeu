@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 // NOTE: this is a convenience gate for local demo use, not real
-// security — the check runs entirely client-side, so anyone reading
+// security: the check runs entirely client-side, so anyone reading
 // the page source (or just opening devtools) can see or bypass it.
 // Never put anything actually sensitive behind this.
 const CRM_PASSWORD = '9988'
@@ -45,7 +45,7 @@ export default function CrmGate({ onUnlock, onClose }) {
           <button type="submit" className="gate-btn">
             Enter Dashboard
           </button>
-          {error && <div className="gate-err" style={{ display: 'block' }}>Wrong password — try again</div>}
+          {error && <div className="gate-err" style={{ display: 'block' }}>Wrong password. Try again.</div>}
         </form>
       </div>
     </div>

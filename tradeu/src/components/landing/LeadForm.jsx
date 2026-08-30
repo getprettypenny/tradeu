@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { submitLead } from '../../lib/formspree'
-import { addLead, updateLead } from '../../lib/leads'
+import { addLead } from '../../lib/leads'
+import { saveLeadCaptured } from '../../lib/progress'
 
 const TRADE_LABEL = {
   electrical: '⚡ Electrical',
   plumbing: '🔧 Plumbing',
   hvac: '❄️ HVAC',
-  'not-sure': '— Not sure',
+  'not-sure': 'Not sure',
 }
 
 function isValidEmail(email) {
@@ -19,9 +20,9 @@ export default function LeadForm() {
   const [email, setEmail] = useState('')
   const [zip, setZip] = useState('')
   const [trade, setTrade] = useState('')
+  const [wantsMatch, setWantsMatch] = useState(true)
   const [status, setStatus] = useState('idle') // idle | submitting | error
-  const [submittedLeadId, setSubmittedLeadId] = useState(null)
-  const [step, setStep] = useState('form') // form | app | matched | no-match
+  const [submitted, setSubmitted] = useState(false)
 
   const valid = name.trim() && isValidEmail(email) && /^\d{5}$/.test(zip) && trade
 
@@ -31,114 +32,33 @@ export default function LeadForm() {
 
     setStatus('submitting')
     try {
-      await submitLead({ name, email, zip, trade, source: 'landing-page' })
-      const lead = addLead({
+      await submitLead({ name, email, zip, trade, wantsMatch, source: 'landing-page' })
+      addLead({
         name,
         email,
         zip,
         trade,
         status: 'New',
         notes: '',
-        programMatch: 'pending',
+        programMatch: wantsMatch ? 'yes' : 'no',
         date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       })
-      setSubmittedLeadId(lead.id)
-      setStep('app')
+      saveLeadCaptured()
+      setSubmitted(true)
     } catch {
       setStatus('error')
     }
   }
 
-  function handleMatch(wantsMatch) {
-    if (submittedLeadId) updateLead(submittedLeadId, { programMatch: wantsMatch ? 'yes' : 'no' })
-    setStep(wantsMatch ? 'matched' : 'no-match')
-  }
-
-  if (step === 'app' || step === 'matched' || step === 'no-match') {
+  if (submitted) {
     return (
       <div className="form-card">
         <div className="success-state" style={{ display: 'block' }}>
-          {step === 'app' && (
-            <div>
-              <h3>You're in.</h3>
-              <p>Your first lesson is ready — it takes about 5 minutes.</p>
-              <Link to="/play" className="success-btn">
-                Start Your First Lesson →
-              </Link>
-              <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--line)' }}>
-                <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--lp-ink)', marginBottom: 6 }}>
-                  One more thing —
-                </p>
-                <p style={{ fontSize: 14, color: 'var(--ink-2)', marginBottom: 16, lineHeight: 1.6 }}>
-                  Would you like us to match you with electrical and plumbing programs near you? Free —
-                  no obligation.
-                </p>
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <button
-                    type="button"
-                    onClick={() => handleMatch(true)}
-                    style={{
-                      flex: 1,
-                      background: 'var(--lp-ink)',
-                      color: 'var(--white)',
-                      border: 'none',
-                      padding: 12,
-                      fontSize: 14,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      fontFamily: "'IBM Plex Sans', sans-serif",
-                    }}
-                  >
-                    Yes, match me
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleMatch(false)}
-                    style={{
-                      flex: 1,
-                      background: 'transparent',
-                      color: 'var(--ink-2)',
-                      border: '1.5px solid var(--line)',
-                      padding: 12,
-                      fontSize: 14,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      fontFamily: "'IBM Plex Sans', sans-serif",
-                    }}
-                  >
-                    No thanks
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 'matched' && (
-            <div>
-              <p style={{ fontSize: 32, marginBottom: 12 }}>⚡</p>
-              <h3>We'll be in touch.</h3>
-              <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.6, marginBottom: 16 }}>
-                We'll reach out with programs near you based on your zip code and trade interest. In the
-                meantime — start your first lesson.
-              </p>
-              <Link to="/play" className="success-btn">
-                Start Your First Lesson →
-              </Link>
-            </div>
-          )}
-
-          {step === 'no-match' && (
-            <div>
-              <p style={{ fontSize: 32, marginBottom: 12 }}>👍</p>
-              <h3>Got it.</h3>
-              <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.6, marginBottom: 16 }}>
-                No worries — your lesson is ready whenever you are.
-              </p>
-              <Link to="/play" className="success-btn">
-                Start Your First Lesson →
-              </Link>
-            </div>
-          )}
+          <h3>You're in.</h3>
+          <p>Your first lesson is ready. It takes about 5 minutes.</p>
+          <Link to="/play" className="success-btn">
+            Start Your First Lesson →
+          </Link>
         </div>
       </div>
     )
@@ -194,13 +114,33 @@ export default function LeadForm() {
           </select>
         </div>
 
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 8,
+            fontSize: 13,
+            color: 'var(--ink-2)',
+            marginBottom: 14,
+            cursor: 'pointer',
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={wantsMatch}
+            onChange={(e) => setWantsMatch(e.target.checked)}
+            style={{ marginTop: 2 }}
+          />
+          Match me with electrical and plumbing programs near you. Free, no obligation.
+        </label>
+
         <button type="submit" className="submit-btn" disabled={!valid || status === 'submitting'}>
           {status === 'submitting' ? 'Sending…' : 'Get Free Access'}
         </button>
 
         {status === 'error' && (
           <p style={{ fontSize: 13, color: 'var(--lp-red)', marginTop: 10 }}>
-            Something went wrong — mind trying again?
+            Something went wrong. Mind trying again?
           </p>
         )}
 

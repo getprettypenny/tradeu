@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import LeadForm from '../components/landing/LeadForm'
 import CrmGate from '../components/landing/CrmGate'
 import CrmDashboard from '../components/landing/CrmDashboard'
+import { loadLeadCaptured } from '../lib/progress'
 import './landing.css'
 
 const TICKER_ITEMS = [
@@ -29,7 +31,7 @@ const PROBLEMS = [
   },
   {
     tag: 'Nobody tells you what to expect',
-    body: 'Pay cuts in year one, physical demands, schedule pressure alongside a current job — rarely explained clearly before someone applies.',
+    body: 'Pay cuts in year one, physical demands, and schedule pressure alongside a current job are rarely explained clearly before someone applies.',
   },
   {
     tag: 'Knowledge gets gatekept',
@@ -61,6 +63,7 @@ function Ticker() {
 export default function LandingPage() {
   const [crmGateOpen, setCrmGateOpen] = useState(false)
   const [crmDashboardOpen, setCrmDashboardOpen] = useState(false)
+  const [alreadyCaptured] = useState(() => loadLeadCaptured())
 
   function scrollToForm() {
     document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' })
@@ -95,12 +98,12 @@ export default function LandingPage() {
             <em>Find out if you're one of them.</em>
           </h1>
           <p className="hero-sub">
-            TradeU helps you figure out if a trade career fits — before you commit to a program. Short
+            TradeU helps you figure out if a trade career fits before you commit to a program. Short
             lessons, real job site scenarios, no fluff. Electrical and plumbing to start.
           </p>
           <div className="hero-btns">
             <button type="button" className="btn-ink" onClick={scrollToForm}>
-              Find My Path — It's Free
+              Find My Path: It's Free
             </button>
             <button
               type="button"
@@ -156,12 +159,12 @@ export default function LandingPage() {
           <div className="form-grid">
             <div className="form-left">
               <div className="section-mono">Get started</div>
-              <h2>Find out if a trade is right for you — free.</h2>
+              <h2>Find out if a trade is right for you, free.</h2>
               <p>We'll match you to resources, programs, and lessons based on your trade interest and location.</p>
               <div className="trust-list">
                 <div className="trust-item">
                   <div className="trust-check">✓</div>
-                  Free to start — no credit card needed
+                  Free to start, no credit card needed
                 </div>
                 <div className="trust-item">
                   <div className="trust-check">✓</div>
@@ -178,7 +181,17 @@ export default function LandingPage() {
               </div>
             </div>
             <div>
-              <LeadForm />
+              {alreadyCaptured ? (
+                <div className="form-card">
+                  <h3>Welcome back.</h3>
+                  <p className="sub">We've already got your info on file.</p>
+                  <Link to="/play" className="success-btn" style={{ display: 'block', textAlign: 'center' }}>
+                    Start a Lesson →
+                  </Link>
+                </div>
+              ) : (
+                <LeadForm />
+              )}
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ const TRADE_OPTIONS = [
   { value: 'electrical', label: '⚡ Electrical' },
   { value: 'plumbing', label: '🔧 Plumbing' },
   { value: 'hvac', label: '❄️ HVAC' },
-  { value: 'not-sure', label: '— Not sure' },
+  { value: 'not-sure', label: 'Not sure' },
 ]
 
 const JOURNEY_OPTIONS = [
@@ -27,7 +27,7 @@ function isValidEmail(email) {
 
 // Hard-gated bottom sheet: no close button, backdrop tap does nothing,
 // and dragging it down always rubber-bands back rather than actually
-// dismissing — per spec, there is no way out without submitting at
+// dismissing. Per spec, there is no way out without submitting at
 // least an email (the minimal-mode form on the flip side).
 export default function CaptureSheet({ visible, onSubmitted }) {
   const [mode, setMode] = useState('full') // full | minimal
@@ -78,7 +78,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
   }
   function handlePointerUp() {
     dragging.current = false
-    setDragY(0) // always rubber-bands back — this sheet never actually closes
+    setDragY(0) // always rubber-bands back: this sheet never actually closes
   }
 
   return (
@@ -187,7 +187,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
             </button>
             {status === 'error' && (
               <p className="text-xs" style={{ color: 'var(--red)' }}>
-                Something went wrong — mind trying again?
+                Something went wrong. Mind trying again?
               </p>
             )}
 
@@ -228,7 +228,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
             </button>
             {status === 'error' && (
               <p className="text-xs" style={{ color: 'var(--red)' }}>
-                Something went wrong — mind trying again?
+                Something went wrong. Mind trying again?
               </p>
             )}
 

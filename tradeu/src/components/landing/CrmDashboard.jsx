@@ -5,7 +5,7 @@ const TRADE_LABEL = {
   electrical: '⚡ Electrical',
   plumbing: '🔧 Plumbing',
   hvac: '❄️ HVAC',
-  'not-sure': '— Not sure',
+  'not-sure': 'Not sure',
 }
 
 function exportCSV(leads) {
@@ -77,7 +77,7 @@ export default function CrmDashboard({ onClose }) {
 
       <div className="crm-body">
         <p className="crm-note">
-          Local demo data only — this reflects this browser, not every visitor. Real submissions go to
+          Local demo data only. This reflects this browser, not every visitor. Real submissions go to
           your Formspree inbox.
         </p>
 
@@ -167,7 +167,7 @@ export default function CrmDashboard({ onClose }) {
                     </td>
                     <td className="td-mono">{l.zip}</td>
                     <td style={{ fontSize: 13 }}>{TRADE_LABEL[l.trade] || l.trade}</td>
-                    <td style={{ fontSize: 13 }}>{l.programMatch === 'yes' ? '✓' : l.programMatch === 'no' ? '—' : '…'}</td>
+                    <td style={{ fontSize: 13 }}>{l.programMatch === 'yes' ? '✓' : l.programMatch === 'no' ? '✕' : '…'}</td>
                     <td>
                       <select
                         className="status-select"
@@ -196,7 +196,7 @@ export default function CrmDashboard({ onClose }) {
               </tbody>
             </table>
           ) : (
-            <div className="crm-empty">No leads yet — share the landing page to start collecting signups.</div>
+            <div className="crm-empty">No leads yet. Share the landing page to start collecting signups.</div>
           )}
         </div>
       </div>

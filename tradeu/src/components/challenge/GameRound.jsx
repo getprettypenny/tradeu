@@ -4,7 +4,7 @@ import BoltCounter from '../BoltCounter'
 import { electricalBasicsLesson } from '../../lessons/electricalBasics'
 
 // The 3 "Spot the Violation" scenes, run back to back with no way to
-// skip ahead — no exit control here by design, per the strictly
+// skip ahead. No exit control here by design, per the strictly
 // linear flow. Browser back is still always available.
 const scenes = electricalBasicsLesson.questions
 

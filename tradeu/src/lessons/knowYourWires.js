@@ -1,7 +1,7 @@
 export const knowYourWiresLesson = {
   id: 'know-your-wires',
   title: 'Do You Know Your Electrical?',
-  description: 'Wire colors, voltage, and gauge — quick and easy.',
+  description: 'Wire colors, voltage, and gauge. Quick and easy.',
   questions: [
     {
       id: 'outlet-voltage',
@@ -24,7 +24,7 @@ export const knowYourWiresLesson = {
       interaction: 'wires',
       jobLabel: 'Wire Colors',
       narrative: "Now let's open one up. Tap the wire that answers each question.",
-      prompt: 'Which wire is "hot" — energized and able to shock you?',
+      prompt: 'Which wire is "hot": energized and able to shock you?',
       options: [
         { id: 'white', label: 'White', shortLabel: 'White', color: '#DCD5C4' },
         { id: 'green', label: 'Green', shortLabel: 'Green', color: 'var(--green)' },
@@ -32,7 +32,7 @@ export const knowYourWiresLesson = {
         { id: 'bare', label: 'Bare copper', shortLabel: 'Bare', color: '#B5824B' },
       ],
       correctOptionId: 'black',
-      explanation: 'Black is the hot wire — always treat it as live.',
+      explanation: 'Black is the hot wire. Always treat it as live.',
     },
     {
       id: 'ground-wire',
@@ -54,7 +54,7 @@ export const knowYourWiresLesson = {
       id: 'grounded-conductor',
       type: 'quiz',
       jobLabel: 'Code Terms',
-      narrative: "This one trips up a lot of people — codebooks don't say what you'd expect.",
+      narrative: "This one trips up a lot of people. Codebooks don't say what you'd expect.",
       prompt: 'The white wire is technically called the "grounded conductor." What do electricians actually call it?',
       options: [
         { id: 'ground', label: 'Ground' },
@@ -69,7 +69,7 @@ export const knowYourWiresLesson = {
       id: 'wire-gauge',
       type: 'quiz',
       jobLabel: 'Wire Gauge',
-      narrative: 'Last one — this is a real jobsite mistake, not just trivia.',
+      narrative: 'Last one. This is a real jobsite mistake, not just trivia.',
       prompt: 'What wire gauge do you need for a standard 20-amp circuit?',
       options: [
         { id: '14', label: '14 AWG' },

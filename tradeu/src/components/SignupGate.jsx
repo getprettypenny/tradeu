@@ -35,8 +35,8 @@ export default function SignupGate({ onSubmitted }) {
         🎉 You finished every lesson!
       </p>
       <p className="text-sm mb-4" style={{ color: 'var(--ink-2)' }}>
-        More lessons are on the way. Leave your info and we'll let you know when they're ready
-        — and if you're weighing trade school, tell us that too.
+        More lessons are on the way. Leave your info and we'll let you know when they're ready,
+        and if you're weighing trade school, tell us that too.
       </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
@@ -79,7 +79,7 @@ export default function SignupGate({ onSubmitted }) {
 
         {status === 'error' && (
           <p className="text-xs" style={{ color: 'var(--red)' }}>
-            Something went wrong — mind trying again?
+            Something went wrong. Mind trying again?
           </p>
         )}
       </form>

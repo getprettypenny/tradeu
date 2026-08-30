@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 // Shows the lifetime bolt total. pulseKey is a monotonically increasing
-// counter owned by the app, incremented once per bolt earned — but
+// counter owned by the app, incremented once per bolt earned, but
 // since it's global, a freshly mounted counter (e.g. entering a new
 // lesson) would otherwise see a non-zero value on its very first
 // render and play a false "+1" for a bolt it didn't just earn. The ref

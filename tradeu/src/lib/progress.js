@@ -1,6 +1,6 @@
 // Tracks which lessons the player has finished, persisted per-browser
 // so unlocked lessons stay unlocked across visits. Every access is
-// guarded — localStorage can throw (private browsing, disabled site
+// guarded: localStorage can throw (private browsing, disabled site
 // data) and should never break the app when it does.
 const STORAGE_KEY = 'tradeu:completed-lessons'
 
@@ -19,11 +19,11 @@ export function saveCompletedLessonIds(ids) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ids))
   } catch {
-    // storage unavailable — progress just won't persist this session
+    // storage unavailable, progress just won't persist this session
   }
 }
 
-// Lifetime lightning-bolt count — one per correct answer, across every
+// Lifetime lightning-bolt count: one per correct answer, across every
 // lesson and every replay. Same guarded persistence pattern as above.
 const BOLTS_KEY = 'tradeu:bolts'
 
@@ -41,28 +41,30 @@ export function saveBolts(count) {
   try {
     localStorage.setItem(BOLTS_KEY, String(count))
   } catch {
-    // storage unavailable — bolt count just won't persist this session
+    // storage unavailable, bolt count just won't persist this session
   }
 }
 
-// Whether the "more lessons" signup form (shown after every current
-// lesson is complete) has already been submitted, so it doesn't nag
-// a returning visitor who already signed up.
-const SIGNUP_KEY = 'tradeu:signup-submitted'
+// Whether this browser has already handed over a lead (name + email,
+// at minimum) through ANY of the three capture surfaces: the landing
+// page form, the /play signup card, or the /challenge capture sheet.
+// Shared across all three so submitting once means none of them ask
+// again.
+const LEAD_CAPTURED_KEY = 'tradeu:lead-captured'
 
-export function loadSignupSubmitted() {
+export function loadLeadCaptured() {
   try {
-    return localStorage.getItem(SIGNUP_KEY) === 'true'
+    return localStorage.getItem(LEAD_CAPTURED_KEY) === 'true'
   } catch {
     return false
   }
 }
 
-export function saveSignupSubmitted() {
+export function saveLeadCaptured() {
   try {
-    localStorage.setItem(SIGNUP_KEY, 'true')
+    localStorage.setItem(LEAD_CAPTURED_KEY, 'true')
   } catch {
-    // storage unavailable — will just be asked again next visit
+    // storage unavailable, will just be asked again next visit
   }
 }
 

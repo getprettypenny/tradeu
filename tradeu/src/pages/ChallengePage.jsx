@@ -6,7 +6,14 @@ import ChallengeQuiz from '../components/challenge/ChallengeQuiz'
 import QuizResultsScreen from '../components/challenge/QuizResultsScreen'
 import CaptureSheet from '../components/challenge/CaptureSheet'
 import { electricalBasicsLesson } from '../lessons/electricalBasics'
-import { loadBolts, saveBolts, recordPlaySession, loadStreak } from '../lib/progress'
+import {
+  loadBolts,
+  saveBolts,
+  recordPlaySession,
+  loadStreak,
+  loadLeadCaptured,
+  saveLeadCaptured,
+} from '../lib/progress'
 
 const TOTAL_GAME_VIOLATIONS = electricalBasicsLesson.questions.reduce(
   (sum, scene) => sum + scene.hotspots.filter((h) => h.isViolation).length,
@@ -14,9 +21,10 @@ const TOTAL_GAME_VIOLATIONS = electricalBasicsLesson.questions.reduce(
 )
 
 // Strictly linear: game -> game-score -> trade-picker -> quiz ->
-// quiz-results (capture sheet auto-appears) -> submitted -> (Play
+// quiz-results (capture sheet auto-appears, unless this browser has
+// already handed over a lead on any surface) -> submitted -> (Play
 // Again loops back to game). No way to skip ahead or jump between
-// steps — each step's own screen is the only way forward.
+// steps: each step's own screen is the only way forward.
 export default function ChallengePage() {
   const [step, setStep] = useState('game')
   const [bolts, setBolts] = useState(() => loadBolts())
@@ -25,6 +33,7 @@ export default function ChallengePage() {
   const [quizResult, setQuizResult] = useState(null)
   const [streakDays, setStreakDays] = useState(() => loadStreak())
   const [sheetVisible, setSheetVisible] = useState(false)
+  const [leadCaptured, setLeadCaptured] = useState(() => loadLeadCaptured())
 
   function handleEarnBolt() {
     setBolts((prev) => {
@@ -44,10 +53,14 @@ export default function ChallengePage() {
     setQuizResult(result)
     setStreakDays(recordPlaySession())
     setStep('quiz-results')
-    setTimeout(() => setSheetVisible(true), 1000)
+    if (!leadCaptured) {
+      setTimeout(() => setSheetVisible(true), 1000)
+    }
   }
 
   function handleSubmitted() {
+    saveLeadCaptured()
+    setLeadCaptured(true)
     setSheetVisible(false)
     setStep('submitted')
   }
@@ -104,7 +117,20 @@ export default function ChallengePage() {
               bestStreak={quizResult.bestStreak}
               streakDays={streakDays}
             />
-            <CaptureSheet visible={sheetVisible} onSubmitted={handleSubmitted} />
+            {leadCaptured ? (
+              <footer className="px-4 pb-6 pt-2">
+                <button
+                  type="button"
+                  onClick={handlePlayAgain}
+                  className="w-full rounded-xl py-3 text-sm font-semibold"
+                  style={{ background: 'var(--ink)', color: '#fff' }}
+                >
+                  Play Again
+                </button>
+              </footer>
+            ) : (
+              <CaptureSheet visible={sheetVisible} onSubmitted={handleSubmitted} />
+            )}
           </>
         )}
 

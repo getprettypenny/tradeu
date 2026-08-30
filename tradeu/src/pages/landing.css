@@ -7,7 +7,7 @@
 @import '@fontsource/ibm-plex-sans/700.css';
 
 /*
-  Scoped to .landing-page rather than :root — this page's --ink,
+  Scoped to .landing-page rather than :root: this page's --ink,
   --yellow, --red etc. use different values than the app's own
   index.css variables of the same name. Defining them on :root would
   leak into /play and subtly shift the game's colors too.

@@ -1,5 +1,5 @@
 // Local, per-browser lead log used only by the landing page's demo CRM
-// view. This is NOT a real shared backend — it only ever reflects
+// view. This is NOT a real shared backend: it only ever reflects
 // whatever this one browser has submitted, plus the seeded demo rows
 // below. The real, cross-visitor lead list lives in Formspree
 // (see lib/formspree.js) once a submission actually goes out.
@@ -24,7 +24,7 @@ const SEED_LEADS = [
     zip: '90401',
     trade: 'plumbing',
     status: 'Contacted',
-    notes: 'Called — interested in SMC program',
+    notes: 'Called, interested in SMC program',
     programMatch: 'pending',
     date: 'Aug 13, 2026',
   },
@@ -59,7 +59,7 @@ export function saveLeads(leads) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(leads))
   } catch {
-    // storage unavailable — demo CRM just won't persist this session
+    // storage unavailable: demo CRM just won't persist this session
   }
 }
 

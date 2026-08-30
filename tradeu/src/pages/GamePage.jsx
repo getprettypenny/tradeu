@@ -11,14 +11,14 @@ import {
   saveCompletedLessonIds,
   loadBolts,
   saveBolts,
-  loadSignupSubmitted,
-  saveSignupSubmitted,
+  loadLeadCaptured,
+  saveLeadCaptured,
 } from '../lib/progress'
 
 const lessons = [electricalBasicsLesson, knowYourWiresLesson, gfciAfciLesson]
 
-// Visual-only filler so the path teases more depth than exists yet —
-// always locked, no real content or names behind them.
+// Visual-only filler so the path teases more depth than exists yet.
+// Always locked, no real content or names behind them.
 const COMING_SOON_COUNT = 4
 const comingSoonNodes = Array.from({ length: COMING_SOON_COUNT }, (_, i) => ({
   id: `coming-soon-${i}`,
@@ -33,7 +33,7 @@ export default function GamePage() {
   const [completedLessonIds, setCompletedLessonIds] = useState(() => loadCompletedLessonIds())
   const [bolts, setBolts] = useState(() => loadBolts())
   const [boltPulse, setBoltPulse] = useState(0)
-  const [signupSubmitted, setSignupSubmitted] = useState(() => loadSignupSubmitted())
+  const [signupSubmitted, setSignupSubmitted] = useState(() => loadLeadCaptured())
 
   const selectedLesson = lessons.find((l) => l.id === selectedLessonId) ?? null
   const allLessonsComplete = lessons.every((l) => completedLessonIds.includes(l.id))
@@ -73,7 +73,7 @@ export default function GamePage() {
   }
 
   function handleSignupSubmitted() {
-    saveSignupSubmitted()
+    saveLeadCaptured()
     setSignupSubmitted(true)
   }
 

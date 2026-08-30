@@ -6,7 +6,7 @@
 // Reads from VITE_FORMSPREE_URL (set it in .env.local for dev, and as
 // an environment variable on whatever host you deploy to) with a
 // fallback to the endpoint already in use, so nothing breaks if the
-// env var isn't set. Note this isn't a secret either way — Vite
+// env var isn't set. Note this isn't a secret either way: Vite
 // inlines VITE_-prefixed vars into the client bundle at build time,
 // so the URL is visible in the shipped JS regardless of where it's
 // configured from.

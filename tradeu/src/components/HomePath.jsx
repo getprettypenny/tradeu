@@ -2,7 +2,7 @@ import BoltCounter from './BoltCounter'
 
 const NODE_Y_START = 40
 const NODE_Y_GAP = 148
-const X_PATTERN = [50, 28, 72] // percentages — center, left, right, repeating
+const X_PATTERN = [50, 28, 72] // percentages: center, left, right, repeating
 
 function nodeState(lesson) {
   if (lesson.completed) return 'completed'

@@ -1,6 +1,6 @@
 // Interactive quiz question for wire-color answers: instead of a text
 // button list, an open wall box with colored wire leads that you tap
-// directly to answer — same tap-to-answer language as the rest of the app.
+// directly to answer, same tap-to-answer language as the rest of the app.
 const ENDPOINTS = [
   { x: 62, y: 210 },
   { x: 154, y: 240 },
