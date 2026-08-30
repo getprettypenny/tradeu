@@ -1,42 +1,206 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import LeadForm from '../components/landing/LeadForm'
+import CrmGate from '../components/landing/CrmGate'
+import CrmDashboard from '../components/landing/CrmDashboard'
+import './landing.css'
 
-// Placeholder landing page — swap this out for the real design once
-// it's ready. Kept intentionally simple: headline, pitch, one CTA into
-// the game at /play. Not wrapped in the phone-card shell GamePage uses,
-// since a marketing landing page is typically a normal full-width page.
-export default function LandingPage() {
+const TICKER_ITEMS = [
+  '⚡ ELECTRICAL',
+  '🔧 PLUMBING',
+  '❄️ HVAC',
+  '500K JOBS UNFILLED',
+  '$48–72/HR LICENSED',
+  'FREE TO START',
+]
+
+const PROBLEMS = [
+  {
+    tag: 'No way to test fit',
+    body: "There's no quick way to find out if you'd actually like the work before enrolling somewhere and spending money.",
+  },
+  {
+    tag: "Code books aren't teaching tools",
+    body: (
+      <>
+        The NEC and IPC read like legal documents. <strong>There's no plain-English starting point</strong>{' '}
+        for someone brand new to the field.
+      </>
+    ),
+  },
+  {
+    tag: 'Nobody tells you what to expect',
+    body: 'Pay cuts in year one, physical demands, schedule pressure alongside a current job — rarely explained clearly before someone applies.',
+  },
+  {
+    tag: 'Knowledge gets gatekept',
+    body: (
+      <>
+        On most job sites, <strong>experienced workers protect their position</strong> instead of
+        teaching. Success depends on luck, not access.
+      </>
+    ),
+  },
+]
+
+function Ticker() {
+  const doubled = [...TICKER_ITEMS, ...TICKER_ITEMS]
   return (
-    <div
-      className="min-h-screen w-full flex flex-col items-center justify-center px-6 text-center"
-      style={{ background: 'var(--bg)' }}
-    >
-      <svg viewBox="0 0 100 100" className="w-16 h-16 mb-6">
-        <circle cx="50" cy="50" r="48" fill="var(--yellow)" />
-        <path d="M 55 14 L 30 54 L 46 54 L 41 88 L 72 44 L 52 44 Z" fill="var(--ink)" />
-      </svg>
+    <div className="ticker">
+      <div className="ticker-inner">
+        {doubled.map((item, i) => (
+          <span key={i}>
+            <span className="ticker-item">{item}</span>
+            {i < doubled.length - 1 && <span className="ticker-item ticker-sep">·</span>}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
 
-      <h1
-        className="text-3xl mb-3 max-w-xs"
-        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-      >
-        Learn the trade. One lesson at a time.
-      </h1>
-      <p className="text-sm mb-8 max-w-xs" style={{ color: 'var(--ink-2)' }}>
-        Spot real code violations, learn your wires, and test what you know — free, right in
-        your browser.
-      </p>
+export default function LandingPage() {
+  const [crmGateOpen, setCrmGateOpen] = useState(false)
+  const [crmDashboardOpen, setCrmDashboardOpen] = useState(false)
 
-      <Link
-        to="/play"
-        className="inline-block rounded-xl px-8 py-3.5 text-sm font-semibold"
-        style={{ background: 'var(--ink)', color: '#fff' }}
-      >
-        Try a free lesson
-      </Link>
+  function scrollToForm() {
+    document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' })
+  }
 
-      <p className="text-xs mt-10" style={{ color: 'var(--ink-3)' }}>
-        Placeholder landing page — swap in the real design here.
-      </p>
+  return (
+    <div className="landing-page">
+      <nav className="site-nav">
+        <div className="nav-inner">
+          <div className="nav-logo">
+            <span className="bolt">⚡</span> TRADEU
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <button type="button" className="crm-link" onClick={() => setCrmGateOpen(true)}>
+              CRM ↗
+            </button>
+            <button type="button" className="nav-cta" onClick={scrollToForm}>
+              Get Started Free
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <Ticker />
+
+      <section className="hero">
+        <div className="wrap">
+          <div className="hero-kicker">Trades education · Free to start</div>
+          <h1>
+            The trades need people.
+            <br />
+            <em>Find out if you're one of them.</em>
+          </h1>
+          <p className="hero-sub">
+            TradeU helps you figure out if a trade career fits — before you commit to a program. Short
+            lessons, real job site scenarios, no fluff. Electrical and plumbing to start.
+          </p>
+          <div className="hero-btns">
+            <button type="button" className="btn-ink" onClick={scrollToForm}>
+              Find My Path — It's Free
+            </button>
+            <button
+              type="button"
+              className="btn-ghost"
+              onClick={() => document.getElementById('why')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Why TradeU
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div className="stats">
+        <div className="stat">
+          <div className="stat-n">65%</div>
+          <div className="stat-l">of apprentices never finish their program</div>
+        </div>
+        <div className="stat">
+          <div className="stat-n">81,000</div>
+          <div className="stat-l">electrician job openings every year in the US</div>
+        </div>
+        <div className="stat">
+          <div className="stat-n">$48–72</div>
+          <div className="stat-l">per hour for a licensed journeyman electrician in LA</div>
+        </div>
+        <div className="stat">
+          <div className="stat-n">$0</div>
+          <div className="stat-l">to find out if it's the right fit for you</div>
+        </div>
+      </div>
+
+      <section className="section" id="why">
+        <div className="wrap">
+          <div className="section-mono">The problem</div>
+          <h2>Most people don't get a real look before they commit.</h2>
+          <p className="section-sub">
+            Trade programs ask for months and money before you know if the work suits you. TradeU starts
+            the other way around.
+          </p>
+          <div className="prob-table">
+            {PROBLEMS.map((p) => (
+              <div className="prob-row" key={p.tag}>
+                <div className="prob-tag">{p.tag}</div>
+                <div className="prob-body">{p.body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="form-section" id="signup">
+        <div className="wrap">
+          <div className="form-grid">
+            <div className="form-left">
+              <div className="section-mono">Get started</div>
+              <h2>Find out if a trade is right for you — free.</h2>
+              <p>We'll match you to resources, programs, and lessons based on your trade interest and location.</p>
+              <div className="trust-list">
+                <div className="trust-item">
+                  <div className="trust-check">✓</div>
+                  Free to start — no credit card needed
+                </div>
+                <div className="trust-item">
+                  <div className="trust-check">✓</div>
+                  5-minute lessons built for busy schedules
+                </div>
+                <div className="trust-item">
+                  <div className="trust-check">✓</div>
+                  Programs near you based on your zip code
+                </div>
+                <div className="trust-item">
+                  <div className="trust-check">✓</div>
+                  No spam. Unsubscribe any time.
+                </div>
+              </div>
+            </div>
+            <div>
+              <LeadForm />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div className="footer-inner">
+          <div className="footer-logo">⚡ TRADEU</div>
+          <div className="footer-r">Built in Santa Monica, CA · © 2026</div>
+        </div>
+      </footer>
+
+      {crmGateOpen && (
+        <CrmGate
+          onUnlock={() => {
+            setCrmGateOpen(false)
+            setCrmDashboardOpen(true)
+          }}
+          onClose={() => setCrmGateOpen(false)}
+        />
+      )}
+      {crmDashboardOpen && <CrmDashboard onClose={() => setCrmDashboardOpen(false)} />}
     </div>
   )
 }

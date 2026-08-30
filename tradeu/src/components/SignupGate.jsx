@@ -1,9 +1,5 @@
 import { useState } from 'react'
-
-// TODO: replace with a real Formspree (or similar) endpoint, e.g.
-// https://formspree.io/f/xxxxxxxx — sign up free at formspree.io,
-// create a form, and paste its endpoint URL here.
-const FORM_ENDPOINT = 'REPLACE_WITH_YOUR_FORM_ENDPOINT'
+import { submitLead } from '../lib/formspree'
 
 const inputStyle = {
   background: '#FFFFFF',
@@ -21,21 +17,9 @@ export default function SignupGate({ onSubmitted }) {
     e.preventDefault()
     if (!name.trim() || !email.trim()) return
 
-    if (FORM_ENDPOINT === 'REPLACE_WITH_YOUR_FORM_ENDPOINT') {
-      // eslint-disable-next-line no-console
-      console.warn('SignupGate: FORM_ENDPOINT is still a placeholder — set a real Formspree URL.')
-      onSubmitted()
-      return
-    }
-
     setStatus('submitting')
     try {
-      const res = await fetch(FORM_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ name, email, interest }),
-      })
-      if (!res.ok) throw new Error('submit failed')
+      await submitLead({ name, email, interest, source: 'in-game-completion' })
       onSubmitted()
     } catch {
       setStatus('error')
