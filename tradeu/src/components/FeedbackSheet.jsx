@@ -42,6 +42,14 @@ export default function FeedbackSheet({ hotspot, onClose }) {
             <p className="text-sm leading-relaxed" style={{ color: 'var(--ink-2)' }}>
               {hotspot.explanation}
             </p>
+            {hotspot.code && (
+              <p
+                className="text-xs font-semibold uppercase tracking-wide mt-1.5"
+                style={{ color: 'var(--ink-3)' }}
+              >
+                {hotspot.code}
+              </p>
+            )}
 
             <button
               type="button"

@@ -2,8 +2,8 @@ import BreakerPanel from '../components/scenes/BreakerPanel'
 
 export const gfciAfciLesson = {
   id: 'gfci-afci',
-  title: 'GFCI vs. AFCI',
-  description: 'Where each protection type is actually required — and where you need both.',
+  title: 'Get to Know Your Plugs',
+  description: 'Where GFCI and AFCI protection actually matter.',
   questions: [
     {
       id: 'gfci-bathroom',
@@ -19,8 +19,8 @@ export const gfciAfciLesson = {
         { id: 'living-room', label: 'Living room outlet' },
       ],
       correctOptionId: 'bathroom',
-      explanation:
-        'Bathrooms are one of the classic GFCI-required locations — anywhere water and outlets mix (NEC 210.8).',
+      explanation: 'Bathrooms always need GFCI protection.',
+      code: 'NEC 210.8',
     },
     {
       id: 'gfci-sink-distance',
@@ -36,8 +36,8 @@ export const gfciAfciLesson = {
         { id: '12', label: '12 ft' },
       ],
       correctOptionId: '6',
-      explanation:
-        "6 ft from the edge of any sink — kitchen, bathroom, wet bar, utility sink, doesn't matter (NEC 210.8).",
+      explanation: 'GFCI covers any outlet within 6 ft of a sink.',
+      code: 'NEC 210.8',
     },
     {
       id: 'afci-bedroom',
@@ -53,8 +53,8 @@ export const gfciAfciLesson = {
         { id: 'patio', label: 'Outdoor patio' },
       ],
       correctOptionId: 'bedroom',
-      explanation:
-        'AFCI covers most living spaces — bedrooms, living rooms, family rooms, hallways, and more (NEC 210.12).',
+      explanation: 'Bedrooms and living spaces need AFCI protection.',
+      code: 'NEC 210.12',
     },
     {
       id: 'gfci-vs-afci',
@@ -70,8 +70,7 @@ export const gfciAfciLesson = {
         { id: 'lightning', label: 'Lightning strikes' },
       ],
       correctOptionId: 'arc',
-      explanation:
-        "GFCI watches for current leaking to ground — a shock risk. AFCI watches for arcing in the wiring itself — a fire risk. Different hazard, different protection.",
+      explanation: 'AFCI stops fires from arcing wires. GFCI stops shocks.',
     },
     {
       id: 'kitchen-both',
@@ -87,8 +86,7 @@ export const gfciAfciLesson = {
         { id: 'neither', label: 'Neither — kitchens are exempt' },
       ],
       correctOptionId: 'both',
-      explanation:
-        'Kitchens (and laundry areas) can need both at once — a dual-function breaker, or a GFCI outlet fed from an AFCI-protected circuit — since both shock and arc-fault risks are present.',
+      explanation: 'Kitchens often need GFCI and AFCI together.',
     },
   ],
 }

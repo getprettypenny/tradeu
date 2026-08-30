@@ -4,16 +4,15 @@ import Bedroom, { hotspots as bedroomHotspots } from '../components/scenes/Bedro
 
 export const electricalBasicsLesson = {
   id: 'electrical-basics',
-  title: 'Electrical Rough-In Basics',
-  description: 'Walk three job sites and spot what would fail inspection.',
+  title: 'Spot the Violation',
+  description: 'Three rooms, a few mistakes hiding in each. Can you find them?',
   questions: [
     {
       id: 'bathroom',
       type: 'inspect',
       jobLabel: 'Job: Bathroom Install',
-      narrative:
-        'You just wired this bathroom. Walk through your own work before the inspector does — tap anything that might fail code.',
-      completeMessage: 'Clean job — you caught every violation. This passes inspection.',
+      narrative: 'You just wired this bathroom. Tap anything you think might fail inspection.',
+      completeMessage: 'Nice — you found every mistake in this room.',
       Scene: Bathroom,
       hotspots: bathroomHotspots,
     },
@@ -21,8 +20,7 @@ export const electricalBasicsLesson = {
       id: 'kitchen',
       type: 'inspect',
       jobLabel: 'Job: Kitchen Install',
-      narrative:
-        "Countertop's wired and the fridge is running. Check it over before you close up the walls.",
+      narrative: 'Same idea — tap anything in this kitchen that looks off.',
       completeMessage: 'Nice — the kitchen circuit is clean.',
       Scene: Kitchen,
       hotspots: kitchenHotspots,
@@ -31,9 +29,8 @@ export const electricalBasicsLesson = {
       id: 'bedroom',
       type: 'inspect',
       jobLabel: 'Job: Ceiling Fan Upgrade',
-      narrative:
-        'You just swapped the old light for a ceiling fan, and touched up the outlets while you were in there. Make sure it all holds up to code.',
-      completeMessage: "Fan's good to go — no violations left.",
+      narrative: 'You just hung a new ceiling fan. Check the room over before you call it done.',
+      completeMessage: "Fan's good to go — no mistakes left.",
       Scene: Bedroom,
       hotspots: bedroomHotspots,
     },

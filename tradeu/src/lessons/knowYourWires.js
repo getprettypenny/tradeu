@@ -1,7 +1,7 @@
 export const knowYourWiresLesson = {
   id: 'know-your-wires',
-  title: 'Know Your Wires',
-  description: 'Quick-fire questions on wire colors, voltage, and gauge.',
+  title: 'Do You Know Your Electrical?',
+  description: 'Wire colors, voltage, and gauge — quick and easy.',
   questions: [
     {
       id: 'outlet-voltage',
@@ -16,8 +16,7 @@ export const knowYourWiresLesson = {
         { id: '480', label: '480V' },
       ],
       correctOptionId: '120',
-      explanation:
-        'Most general household outlets run 120V. Big appliances like dryers, ranges, and AC units usually need 240V.',
+      explanation: 'Most household outlets run on 120 volts.',
     },
     {
       id: 'hot-wire',
@@ -33,8 +32,7 @@ export const knowYourWiresLesson = {
         { id: 'bare', label: 'Bare copper', shortLabel: 'Bare', color: '#B5824B' },
       ],
       correctOptionId: 'black',
-      explanation:
-        "Black is the classic hot wire (red and blue show up too on multi-wire circuits). Always treat it as live until you've tested it yourself.",
+      explanation: 'Black is the hot wire — always treat it as live.',
     },
     {
       id: 'ground-wire',
@@ -50,8 +48,7 @@ export const knowYourWiresLesson = {
         { id: 'red', label: 'Red', shortLabel: 'Red', color: 'var(--red)' },
       ],
       correctOptionId: 'green',
-      explanation:
-        "Green or bare copper carries the safety ground back to the panel and into the earth — it shouldn't carry current under normal conditions.",
+      explanation: 'Green or bare copper is the ground wire.',
     },
     {
       id: 'grounded-conductor',
@@ -66,8 +63,7 @@ export const knowYourWiresLesson = {
         { id: 'ungrounded', label: 'Ungrounded' },
       ],
       correctOptionId: 'neutral',
-      explanation:
-        "Confusing but true — the white \"grounded conductor\" is what everyone calls the neutral. It's not the same as the green ground wire, even though both eventually bond at the panel.",
+      explanation: 'The white wire is neutral, even though the code calls it "grounded."',
     },
     {
       id: 'wire-gauge',
@@ -82,8 +78,7 @@ export const knowYourWiresLesson = {
         { id: '8', label: '8 AWG' },
       ],
       correctOptionId: '12',
-      explanation:
-        '12 AWG copper is rated for 20A. 14 AWG is only good for 15A circuits — running it on a 20A breaker is a fire hazard.',
+      explanation: '12 AWG is the right size for a 20-amp circuit.',
     },
   ],
 }

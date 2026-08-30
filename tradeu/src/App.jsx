@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Lesson from './components/Lesson'
-import LessonList from './components/LessonList'
+import HomePath from './components/HomePath'
 import { electricalBasicsLesson } from './lessons/electricalBasics'
 import { knowYourWiresLesson } from './lessons/knowYourWires'
 import { gfciAfciLesson } from './lessons/gfciAfci'
@@ -53,7 +53,7 @@ function App() {
             onComplete={handleComplete}
           />
         ) : (
-          <LessonList lessons={lessonsWithStatus} onSelect={handleSelect} />
+          <HomePath lessons={lessonsWithStatus} onSelect={handleSelect} />
         )}
       </div>
     </div>

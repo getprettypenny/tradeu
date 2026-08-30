@@ -49,6 +49,14 @@ export default function QuizQuestion({ question, selectedOptionId, onSelect }) {
         >
           {isCorrect ? '✅ Correct. ' : '❌ Not quite. '}
           {question.explanation}
+          {question.code && (
+            <div
+              className="text-xs font-semibold uppercase tracking-wide mt-1.5"
+              style={{ color: 'inherit', opacity: 0.7 }}
+            >
+              {question.code}
+            </div>
+          )}
         </div>
       )}
     </div>

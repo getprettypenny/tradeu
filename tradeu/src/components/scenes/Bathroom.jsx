@@ -6,8 +6,8 @@ export const hotspots = [
     id: 'bathroom-sink-outlet',
     label: 'Standard outlet near sink',
     isViolation: true,
-    explanation:
-      'Outlets within 3 ft of a sink need GFCI protection. A standard outlet here is a shock hazard (NEC 210.8).',
+    explanation: 'Outlets within 6 ft of a sink need GFCI protection.',
+    code: 'NEC 210.8',
     cx: 208,
     cy: 300,
   },
@@ -15,8 +15,8 @@ export const hotspots = [
     id: 'bathroom-toilet-junction-box',
     label: 'Open junction box above toilet',
     isViolation: true,
-    explanation:
-      'Junction boxes must stay covered. An open box with exposed splices is a shock and fire hazard (NEC 314.25).',
+    explanation: 'Junction boxes need a cover — exposed wires are dangerous.',
+    code: 'NEC 314.25',
     cx: 332,
     cy: 150,
   },
@@ -24,8 +24,7 @@ export const hotspots = [
     id: 'bathroom-door-gfci-outlet',
     label: 'GFCI outlet near door',
     isViolation: false,
-    explanation:
-      'This outlet is GFCI-protected, exactly what a bathroom circuit needs. Nothing to flag here.',
+    explanation: "GFCI protected — that's what a bathroom outlet needs.",
     cx: 40,
     cy: 300,
   },
@@ -33,8 +32,7 @@ export const hotspots = [
     id: 'bathroom-light-switch',
     label: 'Light switch',
     isViolation: false,
-    explanation:
-      "A standard switch is fine here since it's out of reach of any water source.",
+    explanation: "Switches don't need GFCI protection.",
     cx: 40,
     cy: 190,
   },
