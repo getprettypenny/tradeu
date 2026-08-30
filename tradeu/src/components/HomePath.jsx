@@ -109,7 +109,7 @@ export default function HomePath({ lessons, onSelect, bolts, footer }) {
                 width: 120,
                 cursor: lesson.locked ? 'not-allowed' : 'pointer',
               }}
-              aria-label={lesson.title}
+              aria-label={lesson.title || 'Locked module'}
             >
               <PlugBadge state={state} />
               <span

@@ -65,3 +65,56 @@ export function saveSignupSubmitted() {
     // storage unavailable — will just be asked again next visit
   }
 }
+
+// Daily play streak, Duolingo-style: consecutive calendar days with at
+// least one completed quiz. Playing again the same day doesn't add to
+// it; missing a day resets it to 1. Dates are stored as plain
+// YYYY-MM-DD strings (local calendar day, not a timestamp) so the
+// comparison is just string/day-count math, no timezone-aware parsing.
+const STREAK_KEY = 'tradeu:streak'
+const LAST_PLAYED_KEY = 'tradeu:last-played-date'
+
+function todayKey() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function daysBetween(a, b) {
+  const msPerDay = 24 * 60 * 60 * 1000
+  return Math.round((new Date(b) - new Date(a)) / msPerDay)
+}
+
+export function loadStreak() {
+  try {
+    const n = Number(localStorage.getItem(STREAK_KEY))
+    return Number.isFinite(n) && n > 0 ? n : 0
+  } catch {
+    return 0
+  }
+}
+
+// Call once per completed quiz. Returns the up-to-date streak count.
+export function recordPlaySession() {
+  try {
+    const today = todayKey()
+    const lastPlayed = localStorage.getItem(LAST_PLAYED_KEY)
+    const prevStreak = loadStreak()
+
+    let nextStreak
+    if (!lastPlayed) {
+      nextStreak = 1
+    } else if (lastPlayed === today) {
+      nextStreak = prevStreak || 1
+    } else if (daysBetween(lastPlayed, today) === 1) {
+      nextStreak = prevStreak + 1
+    } else {
+      nextStreak = 1
+    }
+
+    localStorage.setItem(LAST_PLAYED_KEY, today)
+    localStorage.setItem(STREAK_KEY, String(nextStreak))
+    return nextStreak
+  } catch {
+    return loadStreak()
+  }
+}

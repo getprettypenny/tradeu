@@ -17,6 +17,17 @@ import {
 
 const lessons = [electricalBasicsLesson, knowYourWiresLesson, gfciAfciLesson]
 
+// Visual-only filler so the path teases more depth than exists yet —
+// always locked, no real content or names behind them.
+const COMING_SOON_COUNT = 4
+const comingSoonNodes = Array.from({ length: COMING_SOON_COUNT }, (_, i) => ({
+  id: `coming-soon-${i}`,
+  title: '',
+  locked: true,
+  completed: false,
+  comingSoon: true,
+}))
+
 export default function GamePage() {
   const [selectedLessonId, setSelectedLessonId] = useState(null)
   const [completedLessonIds, setCompletedLessonIds] = useState(() => loadCompletedLessonIds())
@@ -27,12 +38,15 @@ export default function GamePage() {
   const selectedLesson = lessons.find((l) => l.id === selectedLessonId) ?? null
   const allLessonsComplete = lessons.every((l) => completedLessonIds.includes(l.id))
 
-  const lessonsWithStatus = lessons.map((lesson, i) => ({
-    ...lesson,
-    completed: completedLessonIds.includes(lesson.id),
-    // the first lesson is always open; every other one needs the one before it done
-    locked: i > 0 && !completedLessonIds.includes(lessons[i - 1].id),
-  }))
+  const lessonsWithStatus = [
+    ...lessons.map((lesson, i) => ({
+      ...lesson,
+      completed: completedLessonIds.includes(lesson.id),
+      // the first lesson is always open; every other one needs the one before it done
+      locked: i > 0 && !completedLessonIds.includes(lessons[i - 1].id),
+    })),
+    ...comingSoonNodes,
+  ]
 
   function handleSelect(lessonId) {
     const target = lessonsWithStatus.find((l) => l.id === lessonId)
