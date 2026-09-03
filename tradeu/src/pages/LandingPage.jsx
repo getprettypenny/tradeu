@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import LeadForm from '../components/landing/LeadForm'
-import CrmGate from '../components/landing/CrmGate'
-import CrmDashboard from '../components/landing/CrmDashboard'
 import { loadLeadCaptured } from '../lib/progress'
 import './landing.css'
 
@@ -61,8 +59,6 @@ function Ticker() {
 }
 
 export default function LandingPage() {
-  const [crmGateOpen, setCrmGateOpen] = useState(false)
-  const [crmDashboardOpen, setCrmDashboardOpen] = useState(false)
   const [alreadyCaptured] = useState(() => loadLeadCaptured())
 
   function scrollToForm() {
@@ -77,9 +73,6 @@ export default function LandingPage() {
             <span className="bolt">⚡</span> TRADEUNI
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <button type="button" className="crm-link" onClick={() => setCrmGateOpen(true)}>
-              CRM ↗
-            </button>
             <button type="button" className="nav-cta" onClick={scrollToForm}>
               Get Started Free
             </button>
@@ -203,17 +196,6 @@ export default function LandingPage() {
           <div className="footer-r">Built in Santa Monica, CA · © 2026</div>
         </div>
       </footer>
-
-      {crmGateOpen && (
-        <CrmGate
-          onUnlock={() => {
-            setCrmGateOpen(false)
-            setCrmDashboardOpen(true)
-          }}
-          onClose={() => setCrmGateOpen(false)}
-        />
-      )}
-      {crmDashboardOpen && <CrmDashboard onClose={() => setCrmDashboardOpen(false)} />}
     </div>
   )
 }

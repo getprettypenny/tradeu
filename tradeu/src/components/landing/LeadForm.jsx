@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { submitLead } from '../../lib/formspree'
-import { addLead } from '../../lib/leads'
 import { saveLeadCaptured } from '../../lib/progress'
 
 const TRADE_LABEL = {
@@ -33,16 +32,6 @@ export default function LeadForm() {
     setStatus('submitting')
     try {
       await submitLead({ name, email, zip, trade, wantsMatch, source: 'landing-page' })
-      addLead({
-        name,
-        email,
-        zip,
-        trade,
-        status: 'New',
-        notes: '',
-        programMatch: wantsMatch ? 'yes' : 'no',
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      })
       saveLeadCaptured()
       setSubmitted(true)
     } catch {
