@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'TradeU',
-        short_name: 'TradeU',
-        description: 'Learn the trade — bite-sized lessons on electrical code.',
+        name: 'TradeUni',
+        short_name: 'TradeUni',
+        description: 'Learn the trade: bite-sized lessons on electrical code.',
         theme_color: '#FFD000',
         background_color: '#F5F0E8',
         display: 'standalone',

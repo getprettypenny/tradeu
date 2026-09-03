@@ -60,7 +60,7 @@ export default function HomePath({ lessons, onSelect, bolts, footer }) {
       <div className="px-5 pt-8 pb-4 flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            TradeU
+            TradeUni
           </h1>
           <p className="text-sm" style={{ color: 'var(--ink-2)' }}>
             Follow the path to level up.

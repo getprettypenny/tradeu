@@ -145,7 +145,7 @@ export default function LeadForm() {
         )}
 
         <p className="form-fine">
-          By signing up you agree to receive occasional emails about TradeU and programs near you.
+          By signing up you agree to receive occasional emails about TradeUni and programs near you.
         </p>
       </form>
     </div>

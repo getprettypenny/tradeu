@@ -74,7 +74,7 @@ export default function LandingPage() {
       <nav className="site-nav">
         <div className="nav-inner">
           <div className="nav-logo">
-            <span className="bolt">⚡</span> TRADEU
+            <span className="bolt">⚡</span> TRADEUNI
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <button type="button" className="crm-link" onClick={() => setCrmGateOpen(true)}>
@@ -98,7 +98,7 @@ export default function LandingPage() {
             <em>Find out if you're one of them.</em>
           </h1>
           <p className="hero-sub">
-            TradeU helps you figure out if a trade career fits before you commit to a program. Short
+            TradeUni helps you figure out if a trade career fits before you commit to a program. Short
             lessons, real job site scenarios, no fluff. Electrical and plumbing to start.
           </p>
           <div className="hero-btns">
@@ -110,7 +110,7 @@ export default function LandingPage() {
               className="btn-ghost"
               onClick={() => document.getElementById('why')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              Why TradeU
+              Why TradeUni
             </button>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default function LandingPage() {
           <div className="section-mono">The problem</div>
           <h2>Most people don't get a real look before they commit.</h2>
           <p className="section-sub">
-            Trade programs ask for months and money before you know if the work suits you. TradeU starts
+            Trade programs ask for months and money before you know if the work suits you. TradeUni starts
             the other way around.
           </p>
           <div className="prob-table">
@@ -199,7 +199,7 @@ export default function LandingPage() {
 
       <footer>
         <div className="footer-inner">
-          <div className="footer-logo">⚡ TRADEU</div>
+          <div className="footer-logo">⚡ TRADEUNI</div>
           <div className="footer-r">Built in Santa Monica, CA · © 2026</div>
         </div>
       </footer>

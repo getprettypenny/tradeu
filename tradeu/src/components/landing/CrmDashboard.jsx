@@ -20,7 +20,7 @@ function exportCSV(leads) {
   const csv = rows.map((r) => r.map((v) => `"${v}"`).join(',')).join('\n')
   const a = document.createElement('a')
   a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv)
-  a.download = 'tradeu-leads-' + new Date().toISOString().slice(0, 10) + '.csv'
+  a.download = 'tradeuni-leads-' + new Date().toISOString().slice(0, 10) + '.csv'
   a.click()
 }
 
@@ -63,7 +63,7 @@ export default function CrmDashboard({ onClose }) {
     <div id="crm-dashboard" className="landing-page">
       <div className="crm-header">
         <div className="crm-logo">
-          <span className="bolt">⚡</span> TRADEU · Lead Dashboard
+          <span className="bolt">⚡</span> TRADEUNI · Lead Dashboard
         </div>
         <div className="crm-hbtns">
           <button type="button" className="crm-btn" onClick={() => exportCSV(leads)}>
