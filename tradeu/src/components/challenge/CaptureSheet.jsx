@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { submitLead } from '../../lib/formspree'
+import { trackLead } from '../../lib/pixel'
 
 const TRADE_OPTIONS = [
   { value: 'electrical', label: '⚡ Electrical' },
@@ -50,6 +51,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
     setStatus('submitting')
     try {
       await submitLead({ firstName, email, zip, trade, journeyStage, source: 'full' })
+      trackLead('full')
       onSubmitted()
     } catch {
       setStatus('error')
@@ -62,6 +64,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
     setStatus('submitting')
     try {
       await submitLead({ email: minimalEmail, source: 'minimal' })
+      trackLead('minimal')
       onSubmitted()
     } catch {
       setStatus('error')

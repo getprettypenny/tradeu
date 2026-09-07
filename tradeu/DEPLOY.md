@@ -80,3 +80,11 @@ never a secret either way — just export it before running
 ```bash
 VITE_FORMSPREE_URL=https://formspree.io/f/xxxxxxx S3_BUCKET=... CLOUDFRONT_DISTRIBUTION_ID=... ./scripts/deploy.sh
 ```
+
+`VITE_META_PIXEL_ID` is also optional and does nothing unless set — get one from
+Meta Business Suite → Events Manager → Connect a data source → Web → Meta
+Pixel, then set it the same way (env var, or in `.env.deploy` alongside
+`S3_BUCKET` and `CLOUDFRONT_DISTRIBUTION_ID`) before running
+`./scripts/deploy.sh` for a build you want ad tracking in. Without it,
+`src/lib/pixel.js` is a no-op and nothing Meta-related loads on the site
+at all.

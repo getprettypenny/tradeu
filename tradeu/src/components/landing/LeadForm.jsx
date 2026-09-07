@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { submitLead } from '../../lib/formspree'
 import { saveLeadCaptured } from '../../lib/progress'
+import { trackLead } from '../../lib/pixel'
 
 const TRADE_LABEL = {
   electrical: '⚡ Electrical',
@@ -33,6 +34,7 @@ export default function LeadForm() {
     try {
       await submitLead({ name, email, zip, trade, wantsMatch, source: 'landing-page' })
       saveLeadCaptured()
+      trackLead('landing-page')
       setSubmitted(true)
     } catch {
       setStatus('error')

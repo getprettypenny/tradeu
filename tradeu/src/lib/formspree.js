@@ -10,13 +10,20 @@
 // inlines VITE_-prefixed vars into the client bundle at build time,
 // so the URL is visible in the shipped JS regardless of where it's
 // configured from.
+import { getUtmParams } from './utm'
+
 export const FORM_ENDPOINT = import.meta.env.VITE_FORMSPREE_URL || 'https://formspree.io/f/mzebznla'
 
+// Every submission automatically carries this browser's first-touch UTM
+// attribution (if any), so a lead can be traced back to the ad/campaign
+// that brought it in without every call site having to remember to add
+// it. Explicit fields win over stale utm data in the unlikely case of a
+// name collision.
 export async function submitLead(fields) {
   const res = await fetch(FORM_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify(fields),
+    body: JSON.stringify({ ...getUtmParams(), ...fields }),
   })
   if (!res.ok) throw new Error('Lead submission failed')
 }

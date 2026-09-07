@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { submitLead } from '../lib/formspree'
+import { trackLead } from '../lib/pixel'
 
 const inputStyle = {
   background: '#FFFFFF',
@@ -20,6 +21,7 @@ export default function SignupGate({ onSubmitted }) {
     setStatus('submitting')
     try {
       await submitLead({ name, email, interest, source: 'in-game-completion' })
+      trackLead('in-game-completion')
       onSubmitted()
     } catch {
       setStatus('error')
