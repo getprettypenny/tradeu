@@ -3,6 +3,8 @@ import Lesson from '../components/Lesson'
 import HomePath from '../components/HomePath'
 import SignupGate from '../components/SignupGate'
 import SignupThankYou from '../components/SignupThankYou'
+import GameIntro from '../components/GameIntro'
+import CaptureSheet from '../components/challenge/CaptureSheet'
 import { electricalBasicsLesson } from '../lessons/electricalBasics'
 import { knowYourWiresLesson } from '../lessons/knowYourWires'
 import { gfciAfciLesson } from '../lessons/gfciAfci'
@@ -34,6 +36,13 @@ export default function GamePage() {
   const [bolts, setBolts] = useState(() => loadBolts())
   const [boltPulse, setBoltPulse] = useState(0)
   const [signupSubmitted, setSignupSubmitted] = useState(() => loadLeadCaptured())
+
+  // Ads link straight here. A browser that hasn't handed over a lead
+  // yet (on ANY surface -- landing page, /play, or /challenge) plays
+  // the gamified 3-scene intro first and only sees the home path after
+  // submitting the lead form. Anyone already captured skips straight
+  // to the normal path below, never forced to replay it.
+  const [introStep, setIntroStep] = useState(() => (loadLeadCaptured() ? 'done' : 'game')) // game | capture | done
 
   const selectedLesson = lessons.find((l) => l.id === selectedLessonId) ?? null
   const allLessonsComplete = lessons.every((l) => completedLessonIds.includes(l.id))
@@ -77,7 +86,18 @@ export default function GamePage() {
     setSignupSubmitted(true)
   }
 
-  return (
+  function handleIntroGameComplete() {
+    setIntroStep('capture')
+  }
+
+  function handleIntroLeadSubmitted() {
+    saveLeadCaptured()
+    setSignupSubmitted(true)
+    handleComplete(electricalBasicsLesson.id) // they just played it as the intro game
+    setIntroStep('done')
+  }
+
+  const frame = (children) => (
     <div
       className="min-h-screen w-full flex justify-center md:py-8 md:px-4"
       style={{ background: '#EAE3D3' }}
@@ -86,33 +106,50 @@ export default function GamePage() {
         className="relative w-full max-w-[430px] min-h-screen md:min-h-0 flex flex-col overflow-hidden md:rounded-[2.5rem] md:shadow-2xl md:border"
         style={{ background: 'var(--bg)', borderColor: 'var(--border)' }}
       >
-        {selectedLesson ? (
-          <Lesson
-            key={selectedLesson.id}
-            lesson={selectedLesson}
-            onExit={() => setSelectedLessonId(null)}
-            onComplete={handleComplete}
-            bolts={bolts}
-            boltPulse={boltPulse}
-            onEarnBolt={handleEarnBolt}
-          />
-        ) : (
-          <HomePath
-            lessons={lessonsWithStatus}
-            onSelect={handleSelect}
-            bolts={bolts}
-            footer={
-              allLessonsComplete ? (
-                signupSubmitted ? (
-                  <SignupThankYou />
-                ) : (
-                  <SignupGate onSubmitted={handleSignupSubmitted} />
-                )
-              ) : null
-            }
-          />
-        )}
+        {children}
       </div>
     </div>
+  )
+
+  if (introStep !== 'done') {
+    // GameIntro stays mounted (and sitting on its own internal "score"
+    // phase) while the capture sheet slides up over it, same as
+    // ChallengePage keeps its results screen visible behind the sheet
+    // rather than cutting to an empty frame.
+    return frame(
+      <>
+        <GameIntro bolts={bolts} boltPulse={boltPulse} onEarnBolt={handleEarnBolt} onComplete={handleIntroGameComplete} />
+        <CaptureSheet visible={introStep === 'capture'} onSubmitted={handleIntroLeadSubmitted} />
+      </>,
+    )
+  }
+
+  return frame(
+    selectedLesson ? (
+      <Lesson
+        key={selectedLesson.id}
+        lesson={selectedLesson}
+        onExit={() => setSelectedLessonId(null)}
+        onComplete={handleComplete}
+        bolts={bolts}
+        boltPulse={boltPulse}
+        onEarnBolt={handleEarnBolt}
+      />
+    ) : (
+      <HomePath
+        lessons={lessonsWithStatus}
+        onSelect={handleSelect}
+        bolts={bolts}
+        footer={
+          allLessonsComplete ? (
+            signupSubmitted ? (
+              <SignupThankYou />
+            ) : (
+              <SignupGate onSubmitted={handleSignupSubmitted} />
+            )
+          ) : null
+        }
+      />
+    ),
   )
 }
