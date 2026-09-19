@@ -112,6 +112,8 @@ export default function GameIntro({ bolts, boltPulse, onEarnBolt, onComplete }) 
     setSceneIndex((i) => i + 1)
     setFoundIds([])
     clearedSoundPlayed.current = false
+    setCountdownValue(3)
+    setPhase('countdown') // 3-2-1-GO again before every room, not just the first
   }
 
   const finalScore = useCountUp(totalFound, phase === 'score')
