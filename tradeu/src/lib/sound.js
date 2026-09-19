@@ -58,3 +58,14 @@ export function playSceneClear() {
   tone({ frequency: 659.25, duration: 0.15, volume: 0.12, delay: 0.12 })
   tone({ frequency: 783.99, duration: 0.25, volume: 0.14, delay: 0.24 })
 }
+
+// The 25-second-per-item timer hit zero before the item was finished.
+export function playTimeout() {
+  tone({ frequency: 220, duration: 0.35, type: 'sawtooth', volume: 0.12 })
+}
+
+// A 10-in-a-row combo streak just added bonus time.
+export function playBonus() {
+  tone({ frequency: 660, duration: 0.1, volume: 0.12 })
+  tone({ frequency: 880, duration: 0.15, volume: 0.14, delay: 0.1 })
+}

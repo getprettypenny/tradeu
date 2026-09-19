@@ -3,7 +3,6 @@ import Lesson from '../components/Lesson'
 import HomePath from '../components/HomePath'
 import SignupGate from '../components/SignupGate'
 import SignupThankYou from '../components/SignupThankYou'
-import GameIntro from '../components/GameIntro'
 import CaptureSheet from '../components/challenge/CaptureSheet'
 import { electricalBasicsLesson } from '../lessons/electricalBasics'
 import { knowYourWiresLesson } from '../lessons/knowYourWires'
@@ -36,6 +35,15 @@ export default function GamePage() {
   const [bolts, setBolts] = useState(() => loadBolts())
   const [boltPulse, setBoltPulse] = useState(0)
   const [signupSubmitted, setSignupSubmitted] = useState(() => loadLeadCaptured())
+
+  // The speed-combo streak spans whichever lessons get played in one
+  // visit -- no single lesson has 10 scoreable items on its own
+  // (electrical-basics tops out at 6, the quizzes at 5 each), so
+  // tracking it per-lesson would make the 10-in-a-row bonus
+  // unreachable. Lives here, not in localStorage: it's a session-long
+  // hot streak, fine to lose on a refresh.
+  const [streak, setStreak] = useState(0)
+  const [bestStreak, setBestStreak] = useState(0)
 
   // Ads link straight here. A browser that hasn't handed over a lead
   // yet (on ANY surface -- landing page, /play, or /challenge) plays
@@ -86,14 +94,18 @@ export default function GamePage() {
     setSignupSubmitted(true)
   }
 
-  function handleIntroGameComplete() {
-    setIntroStep('capture')
+  function handleStreakChange(next) {
+    setStreak(next)
+    setBestStreak((b) => Math.max(b, next))
+  }
+
+  function handleStreakReset() {
+    setStreak(0)
   }
 
   function handleIntroLeadSubmitted() {
     saveLeadCaptured()
     setSignupSubmitted(true)
-    handleComplete(electricalBasicsLesson.id) // they just played it as the intro game
     setIntroStep('done')
   }
 
@@ -112,13 +124,29 @@ export default function GamePage() {
   )
 
   if (introStep !== 'done') {
-    // GameIntro stays mounted (and sitting on its own internal "score"
-    // phase) while the capture sheet slides up over it, same as
-    // ChallengePage keeps its results screen visible behind the sheet
-    // rather than cutting to an empty frame.
+    // The exact same Lesson component every other lesson runs through,
+    // just with the exit "x" hidden (no way to bail early) and its
+    // "Continue" from the finish screen wired to the lead form instead
+    // of back to a lesson picker. Lesson stays mounted (sitting on its
+    // own LessonComplete screen) while the capture sheet slides up over
+    // it, same as ChallengePage keeps its results screen visible behind
+    // the sheet rather than cutting to an empty frame.
     return frame(
       <>
-        <GameIntro bolts={bolts} boltPulse={boltPulse} onEarnBolt={handleEarnBolt} onComplete={handleIntroGameComplete} />
+        <Lesson
+          key="intro"
+          lesson={electricalBasicsLesson}
+          showExit={false}
+          onExit={() => setIntroStep('capture')}
+          onComplete={handleComplete}
+          bolts={bolts}
+          boltPulse={boltPulse}
+          onEarnBolt={handleEarnBolt}
+          streak={streak}
+          bestStreak={bestStreak}
+          onStreakChange={handleStreakChange}
+          onStreakReset={handleStreakReset}
+        />
         <CaptureSheet visible={introStep === 'capture'} onSubmitted={handleIntroLeadSubmitted} />
       </>,
     )
@@ -134,6 +162,10 @@ export default function GamePage() {
         bolts={bolts}
         boltPulse={boltPulse}
         onEarnBolt={handleEarnBolt}
+        streak={streak}
+        bestStreak={bestStreak}
+        onStreakChange={handleStreakChange}
+        onStreakReset={handleStreakReset}
       />
     ) : (
       <HomePath

@@ -8,20 +8,23 @@ export default function LessonProgressBar({
   questionIndex,
   currentRatio,
   onExit,
+  showExit = true,
   bolts,
   boltPulse,
 }) {
   return (
     <div className="flex items-center gap-3 px-5 pt-6 pb-2">
-      <button
-        type="button"
-        onClick={onExit}
-        aria-label="Exit lesson"
-        className="text-2xl leading-none shrink-0"
-        style={{ color: 'var(--ink-3)' }}
-      >
-        ×
-      </button>
+      {showExit && (
+        <button
+          type="button"
+          onClick={onExit}
+          aria-label="Exit lesson"
+          className="text-2xl leading-none shrink-0"
+          style={{ color: 'var(--ink-3)' }}
+        >
+          ×
+        </button>
+      )}
 
       <div className="flex-1 flex gap-1.5">
         {Array.from({ length: questionCount }).map((_, i) => {
