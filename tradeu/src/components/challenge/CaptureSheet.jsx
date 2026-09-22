@@ -29,9 +29,15 @@ function isValidEmail(email) {
 // Hard-gated bottom sheet: no close button, backdrop tap does nothing,
 // and dragging it down always rubber-bands back rather than actually
 // dismissing. Per spec, there is no way out without submitting at
-// least an email (the minimal-mode form on the flip side).
+// least an email.
+//
+// Defaults to the minimal (email-only) form, not the full one: real ad
+// traffic was converting at 0% with the 5-field form as the first
+// thing shown. Lowest-friction ask goes first now, with the fuller
+// form as an opt-in upgrade for people willing to give more, not the
+// other way around.
 export default function CaptureSheet({ visible, onSubmitted }) {
-  const [mode, setMode] = useState('full') // full | minimal
+  const [mode, setMode] = useState('minimal') // minimal | full
   const [firstName, setFirstName] = useState('')
   const [email, setEmail] = useState('')
   const [zip, setZip] = useState('')
@@ -200,14 +206,17 @@ export default function CaptureSheet({ visible, onSubmitted }) {
               className="text-xs font-semibold mt-1 text-center"
               style={{ color: 'var(--ink-2)' }}
             >
-              Just save my email →
+              ← Just save my email instead
             </button>
           </form>
         ) : (
           <form onSubmit={handleMinimalSubmit} className="flex flex-col gap-2.5">
             <h3 className="text-base font-semibold mb-0.5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Just your email
+              Save your score
             </h3>
+            <p className="text-sm mb-2" style={{ color: 'var(--ink-2)' }}>
+              Drop your email and we'll save your progress and let you know when new scenes drop.
+            </p>
             <input
               required
               type="email"
@@ -227,7 +236,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
                 opacity: !minimalValid || status === 'submitting' ? 0.6 : 1,
               }}
             >
-              {status === 'submitting' ? 'Saving…' : 'Remind me when new scenes drop.'}
+              {status === 'submitting' ? 'Saving…' : 'Save My Score'}
             </button>
             {status === 'error' && (
               <p className="text-xs" style={{ color: 'var(--red)' }}>
@@ -241,7 +250,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
               className="text-xs font-semibold mt-1 text-center"
               style={{ color: 'var(--ink-2)' }}
             >
-              ← Fill out full form
+              Want to be matched with a trade program near you? →
             </button>
           </form>
         )}
