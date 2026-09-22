@@ -74,6 +74,14 @@ export default function Lesson({
   bestStreak,
   onStreakChange,
   onStreakReset,
+  // Optional funnel-analytics hooks. Nobody passes these for a normal
+  // lesson picked off the home path -- they exist so GamePage's
+  // fresh-visitor intro run can report Pixel events for each step
+  // (Start tapped, each room/question cleared, a timeout hit) without
+  // Lesson itself knowing anything about Pixel or ad funnels.
+  onStart,
+  onItemComplete,
+  onTimeout,
 }) {
   const [started, setStarted] = useState(false)
   const [questionIndex, setQuestionIndex] = useState(0)
@@ -122,6 +130,7 @@ export default function Lesson({
       playTimeout()
       setTimedOut(true)
       onStreakReset?.()
+      onTimeout?.(questionIndex, lesson.questions.length)
       return
     }
     const id = setTimeout(() => setTimeLeft((t) => t - 1), 1000)
@@ -166,6 +175,7 @@ export default function Lesson({
 
   function handleContinue() {
     if (!isQuiz) playSceneClear()
+    onItemComplete?.(questionIndex, lesson.questions.length)
     const score = isQuiz
       ? { correct: selectedOptionId === question.correctOptionId ? 1 : 0, total: 1 }
       : { correct: totalViolations, total: totalViolations }
@@ -235,7 +245,10 @@ export default function Lesson({
           </p>
           <button
             type="button"
-            onClick={() => setStarted(true)}
+            onClick={() => {
+              onStart?.()
+              setStarted(true)
+            }}
             className="mt-2 w-full rounded-xl py-3 text-sm font-semibold"
             style={{ background: 'var(--ink)', color: '#fff' }}
           >

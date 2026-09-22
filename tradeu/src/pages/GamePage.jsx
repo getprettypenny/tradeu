@@ -15,6 +15,7 @@ import {
   loadLeadCaptured,
   saveLeadCaptured,
 } from '../lib/progress'
+import { trackCustom } from '../lib/pixel'
 
 const lessons = [electricalBasicsLesson, knowYourWiresLesson, gfciAfciLesson]
 
@@ -109,6 +110,25 @@ export default function GamePage() {
     setIntroStep('done')
   }
 
+  // Funnel-step Pixel events for the ad-linked intro flow only -- this
+  // is the one path real ad traffic actually walks, so these are the
+  // events worth watching for drop-off (PageView -> IntroStart ->
+  // IntroRoom1/2/3Complete -> IntroCaptureShown -> Lead). Regular
+  // lessons picked off the home path don't fire any of these.
+  function handleIntroStart() {
+    trackCustom('IntroStart')
+  }
+  function handleIntroItemComplete(index) {
+    trackCustom(`IntroRoom${index + 1}Complete`)
+  }
+  function handleIntroTimeout(index) {
+    trackCustom('IntroTimeout', { room: index + 1 })
+  }
+  function handleIntroCaptureShown() {
+    trackCustom('IntroCaptureShown')
+    setIntroStep('capture')
+  }
+
   const frame = (children) => (
     <div
       className="min-h-screen w-full flex justify-center md:py-8 md:px-4"
@@ -137,7 +157,7 @@ export default function GamePage() {
           key="intro"
           lesson={electricalBasicsLesson}
           showExit={false}
-          onExit={() => setIntroStep('capture')}
+          onExit={handleIntroCaptureShown}
           onComplete={handleComplete}
           bolts={bolts}
           boltPulse={boltPulse}
@@ -146,6 +166,9 @@ export default function GamePage() {
           bestStreak={bestStreak}
           onStreakChange={handleStreakChange}
           onStreakReset={handleStreakReset}
+          onStart={handleIntroStart}
+          onItemComplete={handleIntroItemComplete}
+          onTimeout={handleIntroTimeout}
         />
         <CaptureSheet visible={introStep === 'capture'} onSubmitted={handleIntroLeadSubmitted} />
       </>,

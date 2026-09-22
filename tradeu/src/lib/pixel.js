@@ -58,3 +58,14 @@ export function trackLead(source) {
   if (!PIXEL_ID || typeof window === 'undefined' || !window.fbq) return
   window.fbq('track', 'Lead', source ? { content_name: source } : undefined)
 }
+
+// Custom funnel-step events (Meta's own "standard" events don't cover
+// mid-funnel game milestones). Each distinct `eventName` shows up as
+// its own row with its own count in Events Manager, so a handful of
+// well-placed calls turns "140 PageViews, 0 Leads, no idea why" into
+// an actual step-by-step drop-off funnel without any extra Meta-side
+// configuration.
+export function trackCustom(eventName, params) {
+  if (!PIXEL_ID || typeof window === 'undefined' || !window.fbq) return
+  window.fbq('trackCustom', eventName, params)
+}
