@@ -163,6 +163,7 @@ export default function GamePage() {
           key="intro"
           lesson={electricalBasicsLesson}
           showExit={false}
+          autoStart
           onExit={handleIntroCaptureShown}
           onComplete={handleComplete}
           bolts={bolts}

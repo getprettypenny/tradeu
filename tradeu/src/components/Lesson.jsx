@@ -86,8 +86,15 @@ export default function Lesson({
   onStart,
   onItemComplete,
   onTimeout,
+  // Ad traffic lands straight on /play with intent already spent getting
+  // here -- real funnel data showed ~99.5% of visitors never tapped past
+  // the Ready screen, so the intro run skips it entirely and drops
+  // straight into room 1 (always untimed; there's no screen left to
+  // offer the timer checkbox on). Lessons picked from the home path keep
+  // the Ready screen as normal.
+  autoStart = false,
 }) {
-  const [started, setStarted] = useState(false)
+  const [started, setStarted] = useState(autoStart)
   const [timedMode, setTimedMode] = useState(false)
   const [questionIndex, setQuestionIndex] = useState(0)
   const [foundIds, setFoundIds] = useState([])
@@ -98,6 +105,13 @@ export default function Lesson({
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS)
   const [timedOut, setTimedOut] = useState(false)
   const [retryTick, setRetryTick] = useState(0)
+
+  // Mirrors what tapping "Start" would have reported, since autoStart
+  // skips that button entirely.
+  useEffect(() => {
+    if (autoStart) onStart?.(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const question = lesson.questions[questionIndex]
   const isQuiz = question.type === 'quiz'
