@@ -115,8 +115,14 @@ export default function GamePage() {
   // events worth watching for drop-off (PageView -> IntroStart ->
   // IntroRoom1/2/3Complete -> IntroCaptureShown -> Lead). Regular
   // lessons picked off the home path don't fire any of these.
-  function handleIntroStart() {
+  //
+  // IntroStartTimed vs IntroStartUntimed also tells us whether people
+  // are opting into the timer at all now that it's no longer forced --
+  // useful on its own, and for reading IntroTimeout counts correctly
+  // (only the timed group can ever generate one).
+  function handleIntroStart(timedMode) {
     trackCustom('IntroStart')
+    trackCustom(timedMode ? 'IntroStartTimed' : 'IntroStartUntimed')
   }
   function handleIntroItemComplete(index) {
     trackCustom(`IntroRoom${index + 1}Complete`)

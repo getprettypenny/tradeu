@@ -50,10 +50,14 @@ function LessonComplete({ lesson, correct, total, bestStreak, onRestart, onExit 
 }
 
 // Every lesson -- room-inspection or multiple-choice alike -- runs the
-// same shape: a "Ready?" gate, then each question/scene gets 25
-// seconds. Running out of time only costs you that one item (found
-// hotspots so far in the room, or an unanswered question) -- it never
-// throws out progress on earlier items in the lesson.
+// same shape: a "Ready?" gate, then plays untimed by default. Timing
+// is opt-in (a checkbox on the Ready screen) for people who want the
+// bonus-reward challenge; real usage showed cold first-time visitors
+// hitting a 100% timeout rate on the very first room, so pressure is
+// no longer forced on anyone by default. When timing is on, each
+// question/scene gets 25 seconds, and running out only costs that one
+// item (found hotspots so far in the room, or an unanswered question)
+// -- it never throws out progress on earlier items in the lesson.
 //
 // The combo streak is deliberately NOT owned here: no single lesson
 // has 10 scoreable items on its own (electrical-basics tops out at 6
@@ -84,6 +88,7 @@ export default function Lesson({
   onTimeout,
 }) {
   const [started, setStarted] = useState(false)
+  const [timedMode, setTimedMode] = useState(false)
   const [questionIndex, setQuestionIndex] = useState(0)
   const [foundIds, setFoundIds] = useState([])
   const [activeTap, setActiveTap] = useState(null)
@@ -123,9 +128,10 @@ export default function Lesson({
 
   // Ticks down while the item is actually in progress. Stops the moment
   // it's been solved (canContinue) so nobody times out while just
-  // reading the feedback before clicking Continue.
+  // reading the feedback before clicking Continue. Doesn't run at all
+  // in untimed mode.
   useEffect(() => {
-    if (!started || complete || timedOut || canContinue) return
+    if (!timedMode || !started || complete || timedOut || canContinue) return
     if (timeLeft <= 0) {
       playTimeout()
       setTimedOut(true)
@@ -240,13 +246,23 @@ export default function Lesson({
             Ready?
           </h2>
           <p className="text-sm" style={{ color: 'var(--ink-2)' }}>
-            You've got {ROUND_SECONDS} seconds per {isQuiz ? 'question' : 'room'}. Find a groove and you'll earn
-            bonus time.
+            Play at your own pace, or add a timer for bonus rewards.
           </p>
+          <label
+            className="flex items-center gap-2 text-sm"
+            style={{ color: 'var(--ink-2)', cursor: 'pointer' }}
+          >
+            <input
+              type="checkbox"
+              checked={timedMode}
+              onChange={(e) => setTimedMode(e.target.checked)}
+            />
+            ⏱ Time each {isQuiz ? 'question' : 'room'} for bonus rewards
+          </label>
           <button
             type="button"
             onClick={() => {
-              onStart?.()
+              onStart?.(timedMode)
               setStarted(true)
             }}
             className="mt-2 w-full rounded-xl py-3 text-sm font-semibold"
@@ -299,12 +315,14 @@ export default function Lesson({
               <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--ink-3)' }}>
                 {question.jobLabel}
               </p>
-              <p
-                className="text-xs font-bold tabular-nums"
-                style={{ color: timerUrgent ? 'var(--red)' : 'var(--ink-3)' }}
-              >
-                ⏱ 0:{String(timeLeft).padStart(2, '0')}
-              </p>
+              {timedMode && (
+                <p
+                  className="text-xs font-bold tabular-nums"
+                  style={{ color: timerUrgent ? 'var(--red)' : 'var(--ink-3)' }}
+                >
+                  ⏱ 0:{String(timeLeft).padStart(2, '0')}
+                </p>
+              )}
             </div>
             <p className="text-sm mb-3" style={{ color: 'var(--ink-2)' }}>
               {question.narrative}
