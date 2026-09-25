@@ -38,7 +38,7 @@ export const hotspots = [
   },
 ]
 
-export default function Bathroom({ onTap, foundIds = [] }) {
+export default function Bathroom({ onTap, foundIds = [], showHint = false }) {
   return (
     <svg
       viewBox="0 0 400 520"
@@ -138,7 +138,7 @@ export default function Bathroom({ onTap, foundIds = [] }) {
 
       {/* ===== interactive hotspots ===== */}
       {hotspots.map((h) => (
-        <Hotspot key={h.id} {...h} isFound={foundIds.includes(h.id)} onTap={onTap} />
+        <Hotspot key={h.id} {...h} isFound={foundIds.includes(h.id)} showHint={showHint} onTap={onTap} />
       ))}
     </svg>
   )

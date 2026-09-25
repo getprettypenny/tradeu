@@ -1,22 +1,16 @@
-import { useEffect, useState } from 'react'
-
 // Shared interactive tap target used by every room scene. Before a tap,
 // every fixture, violation or not, gets the same quiet neutral marker,
 // so nothing gives away which ones are wrong. After a tap, the ring
 // reveals the answer: red for a violation, green for up to code.
-export default function Hotspot({ id, label, isViolation, explanation, code, cx, cy, isFound, onTap }) {
+//
+// `showHint` is decided by Lesson.jsx (gated on how many rooms this
+// browser has ever seen -- lib/progress.js) so it only plays for
+// someone's first few rooms ever, not forever. It runs for the whole
+// scene rather than fading on a timer: it stops the moment THIS
+// hotspot is tapped (it switches to the isFound branch below), which
+// is a clearer "got it" signal than an arbitrary timeout.
+export default function Hotspot({ id, label, isViolation, explanation, code, cx, cy, isFound, showHint, onTap }) {
   const tap = () => onTap({ id, label, isViolation, explanation, code })
-
-  // A first-time visitor lands straight in a scene with no "how to
-  // play" step, so give the tap targets a brief, more noticeable ping
-  // on mount to draw the eye -- fades out on its own, no interaction
-  // required, and applies equally to every hotspot so it doesn't leak
-  // which one's the violation.
-  const [showHint, setShowHint] = useState(true)
-  useEffect(() => {
-    const id = setTimeout(() => setShowHint(false), 2500)
-    return () => clearTimeout(id)
-  }, [])
 
   return (
     <g
@@ -47,7 +41,18 @@ export default function Hotspot({ id, label, isViolation, explanation, code, cx,
       ) : (
         <>
           {showHint && (
-            <circle cx={cx} cy={cy} r={18} fill="none" stroke="var(--yellow)" strokeWidth={2} className="hotspot-hint" />
+            <>
+              <circle
+                cx={cx}
+                cy={cy}
+                r={16}
+                fill="none"
+                stroke="var(--yellow)"
+                strokeWidth={2.5}
+                className="hotspot-hint-ring"
+              />
+              <circle cx={cx} cy={cy} r={5} fill="var(--yellow)" className="hotspot-hint-dot" />
+            </>
           )}
           <circle
             cx={cx}

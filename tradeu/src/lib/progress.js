@@ -68,6 +68,32 @@ export function saveLeadCaptured() {
   }
 }
 
+// How many room-inspection scenes this browser has ever loaded. The
+// bright onboarding ping on hotspots (see Hotspot.jsx) only shows for
+// someone's first few rooms ever -- past that they've gotten the idea,
+// and a strong pulse forever would just be visual noise for returning
+// players.
+const ROOMS_SEEN_KEY = 'tradeu:rooms-seen'
+
+export function loadRoomsSeen() {
+  try {
+    const n = Number(localStorage.getItem(ROOMS_SEEN_KEY))
+    return Number.isFinite(n) && n >= 0 ? n : 0
+  } catch {
+    return 0
+  }
+}
+
+export function recordRoomSeen() {
+  try {
+    const next = loadRoomsSeen() + 1
+    localStorage.setItem(ROOMS_SEEN_KEY, String(next))
+    return next
+  } catch {
+    return loadRoomsSeen()
+  }
+}
+
 // Daily play streak, Duolingo-style: consecutive calendar days with at
 // least one completed quiz. Playing again the same day doesn't add to
 // it; missing a day resets it to 1. Dates are stored as plain

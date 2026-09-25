@@ -130,6 +130,12 @@ export default function GamePage() {
   function handleIntroTimeout(index) {
     trackCustom('IntroTimeout', { room: index + 1 })
   }
+  // Fires every time a fresh visitor taps the room itself but misses
+  // every hotspot -- a direct read on "do people realize this is
+  // tappable at all," separate from just watching completion rates.
+  function handleIntroMissTap(index) {
+    trackCustom('IntroMissTap', { room: index + 1 })
+  }
   function handleIntroCaptureShown() {
     trackCustom('IntroCaptureShown')
     setIntroStep('capture')
@@ -176,6 +182,7 @@ export default function GamePage() {
           onStart={handleIntroStart}
           onItemComplete={handleIntroItemComplete}
           onTimeout={handleIntroTimeout}
+          onMissTap={handleIntroMissTap}
         />
         <CaptureSheet visible={introStep === 'capture'} onSubmitted={handleIntroLeadSubmitted} />
       </>,

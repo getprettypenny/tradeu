@@ -5,10 +5,12 @@ import QuizQuestion from './QuizQuestion'
 import WireQuestion from './WireQuestion'
 import Outlet from './scenes/Outlet'
 import { playBonus, playFound, playSceneClear, playTimeout } from '../lib/sound'
+import { loadRoomsSeen, recordRoomSeen } from '../lib/progress'
 
 const ROUND_SECONDS = 25
 const COMBO_SIZE = 10
 const COMBO_BONUS_SECONDS = 10
+const HOTSPOT_HINT_ROOM_LIMIT = 3
 
 function LessonComplete({ lesson, correct, total, bestStreak, onRestart, onExit }) {
   return (
@@ -86,6 +88,7 @@ export default function Lesson({
   onStart,
   onItemComplete,
   onTimeout,
+  onMissTap,
   // Ad traffic lands straight on /play with intent already spent getting
   // here -- real funnel data showed ~99.5% of visitors never tapped past
   // the Ready screen, so the intro run skips it entirely and drops
@@ -105,6 +108,7 @@ export default function Lesson({
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS)
   const [timedOut, setTimedOut] = useState(false)
   const [retryTick, setRetryTick] = useState(0)
+  const [showHotspotHint, setShowHotspotHint] = useState(false)
 
   // Mirrors what tapping "Start" would have reported, since autoStart
   // skips that button entirely.
@@ -115,6 +119,16 @@ export default function Lesson({
 
   const question = lesson.questions[questionIndex]
   const isQuiz = question.type === 'quiz'
+
+  // Counts this room against the lifetime total the first time it's
+  // actually shown (once started, and only for inspect-type rooms --
+  // quiz screens don't have hotspots to hint at).
+  useEffect(() => {
+    if (!started || isQuiz) return
+    setShowHotspotHint(loadRoomsSeen() < HOTSPOT_HINT_ROOM_LIMIT)
+    recordRoomSeen()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started, questionIndex])
   const isLastQuestion = questionIndex === lesson.questions.length - 1
   const QuizVisual = question.visual ?? Outlet
 
@@ -184,6 +198,16 @@ export default function Lesson({
     } else {
       onStreakReset?.()
     }
+  }
+
+  // Diagnostic-only: reports a tap that landed on the room but missed
+  // every hotspot, so we can tell "people don't realize this is
+  // interactive" apart from "people aren't engaging at all." Nobody
+  // wires onMissTap for a normal lesson picked off the home path.
+  function handleBackgroundClick(e) {
+    if (isQuiz) return
+    if (e.target.closest('[role="button"]')) return
+    onMissTap?.(questionIndex, lesson.questions.length)
   }
 
   function handleTryAgain() {
@@ -324,7 +348,7 @@ export default function Lesson({
         </div>
       ) : (
         <>
-          <main className="flex-1 px-4 pb-4 flex flex-col overflow-y-auto">
+          <main className="flex-1 px-4 pb-4 flex flex-col overflow-y-auto" onClick={handleBackgroundClick}>
             <div className="flex items-center justify-between mb-1">
               <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--ink-3)' }}>
                 {question.jobLabel}
@@ -353,7 +377,7 @@ export default function Lesson({
               )
             ) : (
               <>
-                <Scene onTap={handleTap} foundIds={foundIds} />
+                <Scene onTap={handleTap} foundIds={foundIds} showHint={showHotspotHint} />
                 {allFound && (
                   <div
                     className="pop-in mt-4 rounded-xl p-4 text-sm"
