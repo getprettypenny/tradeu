@@ -129,7 +129,7 @@ export default function ChallengePage() {
                 </button>
               </footer>
             ) : (
-              <CaptureSheet visible={sheetVisible} onSubmitted={handleSubmitted} />
+              <CaptureSheet visible={sheetVisible} onSubmitted={handleSubmitted} bolts={bolts} streakDays={streakDays} />
             )}
           </>
         )}

@@ -26,6 +26,53 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
+// Three retention hooks borrowed from Duolingo/mobile-game onboarding,
+// shown above the form itself: loss aversion (bolts + streak they'd be
+// walking away from), and a curiosity-gap preview of what's still
+// locked. Shared between both form modes so the pitch doesn't change
+// depending on which one someone's looking at.
+function StatsRecap({ bolts, streakDays, nextLessons }) {
+  return (
+    <>
+      <div className="flex items-center gap-3 mb-1">
+        <div className="flex items-center gap-1 text-lg font-bold" style={{ color: '#8A6D00' }}>
+          <span aria-hidden="true">⚡</span>
+          <span>{bolts}</span>
+        </div>
+        {streakDays > 0 && (
+          <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: '#C99400' }}>
+            <span aria-hidden="true">🔥</span>
+            <span>{streakDays}-day streak</span>
+          </div>
+        )}
+      </div>
+      <h3 className="text-base font-semibold mb-0.5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        Don't lose your bolts
+      </h3>
+      <p className="text-sm mb-2" style={{ color: 'var(--ink-2)' }}>
+        Make a free account so your {bolts} bolts{streakDays > 0 ? ' and streak' : ''} are saved, and keep playing.
+      </p>
+      {nextLessons.length > 0 && (
+        <div className="flex gap-2 mb-2">
+          {nextLessons.map((l) => (
+            <div
+              key={l.id}
+              className="flex-1 rounded-xl p-2.5 text-xs"
+              style={{ background: '#F5F0E8', border: '1px dashed var(--border)', color: 'var(--ink-2)' }}
+            >
+              <div className="flex items-center gap-1 font-semibold mb-0.5" style={{ color: 'var(--ink)' }}>
+                <span aria-hidden="true">🔒</span>
+                <span>{l.title}</span>
+              </div>
+              <p>{l.description}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  )
+}
+
 // Hard-gated bottom sheet: no close button, backdrop tap does nothing,
 // and dragging it down always rubber-bands back rather than actually
 // dismissing. Per spec, there is no way out without submitting at
@@ -36,7 +83,7 @@ function isValidEmail(email) {
 // thing shown. Lowest-friction ask goes first now, with the fuller
 // form as an opt-in upgrade for people willing to give more, not the
 // other way around.
-export default function CaptureSheet({ visible, onSubmitted }) {
+export default function CaptureSheet({ visible, onSubmitted, bolts = 0, streakDays = 0, nextLessons = [] }) {
   const [mode, setMode] = useState('minimal') // minimal | full
   const [firstName, setFirstName] = useState('')
   const [email, setEmail] = useState('')
@@ -119,12 +166,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
 
         {mode === 'full' ? (
           <form onSubmit={handleFullSubmit} className="flex flex-col gap-2.5">
-            <h3 className="text-base font-semibold mb-0.5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Save your score
-            </h3>
-            <p className="text-sm mb-2" style={{ color: 'var(--ink-2)' }}>
-              Get notified when new scenes drop, and find out what's next for your trade.
-            </p>
+            <StatsRecap bolts={bolts} streakDays={streakDays} nextLessons={nextLessons} />
 
             <input
               required
@@ -192,7 +234,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
                 opacity: !fullValid || status === 'submitting' ? 0.6 : 1,
               }}
             >
-              {status === 'submitting' ? 'Saving…' : 'Save My Score'}
+              {status === 'submitting' ? 'Creating…' : 'Create My Account'}
             </button>
             {status === 'error' && (
               <p className="text-xs" style={{ color: 'var(--red)' }}>
@@ -211,12 +253,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
           </form>
         ) : (
           <form onSubmit={handleMinimalSubmit} className="flex flex-col gap-2.5">
-            <h3 className="text-base font-semibold mb-0.5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Save your score
-            </h3>
-            <p className="text-sm mb-2" style={{ color: 'var(--ink-2)' }}>
-              Drop your email and we'll save your progress and let you know when new scenes drop.
-            </p>
+            <StatsRecap bolts={bolts} streakDays={streakDays} nextLessons={nextLessons} />
             <input
               required
               type="email"
@@ -236,7 +273,7 @@ export default function CaptureSheet({ visible, onSubmitted }) {
                 opacity: !minimalValid || status === 'submitting' ? 0.6 : 1,
               }}
             >
-              {status === 'submitting' ? 'Saving…' : 'Save My Score'}
+              {status === 'submitting' ? 'Creating…' : 'Create My Account'}
             </button>
             {status === 'error' && (
               <p className="text-xs" style={{ color: 'var(--red)' }}>

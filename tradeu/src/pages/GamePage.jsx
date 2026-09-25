@@ -14,6 +14,8 @@ import {
   saveBolts,
   loadLeadCaptured,
   saveLeadCaptured,
+  loadStreak,
+  recordPlaySession,
 } from '../lib/progress'
 import { trackCustom } from '../lib/pixel'
 
@@ -36,6 +38,11 @@ export default function GamePage() {
   const [bolts, setBolts] = useState(() => loadBolts())
   const [boltPulse, setBoltPulse] = useState(0)
   const [signupSubmitted, setSignupSubmitted] = useState(() => loadLeadCaptured())
+
+  // Daily play streak (consecutive calendar days), shown in the capture
+  // sheet as a loss-aversion hook -- distinct from `streak`/`bestStreak`
+  // below, which is the in-session speed-combo streak.
+  const [streakDays, setStreakDays] = useState(() => loadStreak())
 
   // The speed-combo streak spans whichever lessons get played in one
   // visit -- no single lesson has 10 scoreable items on its own
@@ -79,6 +86,7 @@ export default function GamePage() {
       saveCompletedLessonIds(next)
       return next
     })
+    setStreakDays(recordPlaySession())
   }
 
   function handleEarnBolt() {
@@ -184,7 +192,13 @@ export default function GamePage() {
           onTimeout={handleIntroTimeout}
           onMissTap={handleIntroMissTap}
         />
-        <CaptureSheet visible={introStep === 'capture'} onSubmitted={handleIntroLeadSubmitted} />
+        <CaptureSheet
+          visible={introStep === 'capture'}
+          onSubmitted={handleIntroLeadSubmitted}
+          bolts={bolts}
+          streakDays={streakDays}
+          nextLessons={lessons.slice(1)}
+        />
       </>,
     )
   }
