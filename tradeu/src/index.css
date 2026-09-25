@@ -42,6 +42,24 @@ body {
   animation: hotspot-dash 1s linear infinite;
 }
 
+/* One-time "radar ping" that plays for a couple seconds when a scene
+   first loads, so a first-time visitor's eye is drawn to the tap
+   targets before they've read anything -- separate from hotspot-pulse
+   above, which keeps running the whole time as a subtler ongoing cue. */
+@keyframes hotspot-hint {
+  0% {
+    r: 18;
+    opacity: 0.6;
+  }
+  100% {
+    r: 30;
+    opacity: 0;
+  }
+}
+.hotspot-hint {
+  animation: hotspot-hint 1.1s ease-out infinite;
+}
+
 /* BoltCounter's "+1⚡" pop, retriggered by remounting on a fresh key */
 @keyframes bolt-pop {
   0% {
