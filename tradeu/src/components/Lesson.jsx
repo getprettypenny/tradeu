@@ -6,6 +6,7 @@ import WireQuestion from './WireQuestion'
 import Outlet from './scenes/Outlet'
 import { playBonus, playFound, playSceneClear, playTimeout } from '../lib/sound'
 import { loadRoomsSeen, recordRoomSeen } from '../lib/progress'
+import { trackCustom } from '../lib/pixel'
 
 const ROUND_SECONDS = 25
 const COMBO_SIZE = 10
@@ -13,6 +14,14 @@ const COMBO_BONUS_SECONDS = 10
 const HOTSPOT_HINT_ROOM_LIMIT = 3
 
 function LessonComplete({ lesson, correct, total, bestStreak, onRestart, onExit }) {
+  const [feedback, setFeedback] = useState(null) // null | 'up' | 'down'
+
+  function handleFeedback(rating) {
+    if (feedback) return
+    setFeedback(rating)
+    trackCustom('LessonFeedback', { lesson: lesson.id, rating })
+  }
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center text-center px-8 py-10 gap-2">
       <div className="pop-in text-5xl">🎉</div>
@@ -47,6 +56,31 @@ function LessonComplete({ lesson, correct, total, bestStreak, onRestart, onExit 
       >
         Do it again
       </button>
+      <div className="mt-2 flex items-center gap-2 text-sm" style={{ color: 'var(--ink-2)' }}>
+        {feedback ? (
+          <span>Thanks for the feedback!</span>
+        ) : (
+          <>
+            <span>Did you like this?</span>
+            <button
+              type="button"
+              onClick={() => handleFeedback('up')}
+              aria-label="Yes, I liked it"
+              className="text-lg leading-none"
+            >
+              👍
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFeedback('down')}
+              aria-label="No, I didn't like it"
+              className="text-lg leading-none"
+            >
+              👎
+            </button>
+          </>
+        )}
+      </div>
     </div>
   )
 }
@@ -109,6 +143,7 @@ export default function Lesson({
   const [timedOut, setTimedOut] = useState(false)
   const [retryTick, setRetryTick] = useState(0)
   const [showHotspotHint, setShowHotspotHint] = useState(false)
+  const [showStartHint, setShowStartHint] = useState(false)
 
   // Mirrors what tapping "Start" would have reported, since autoStart
   // skips that button entirely.
@@ -129,6 +164,20 @@ export default function Lesson({
     recordRoomSeen()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [started, questionIndex])
+
+  // A short, non-blocking "how to play" banner over the scene itself --
+  // no tap required, fades on its own after a few seconds. Deliberately
+  // NOT a screen you have to dismiss: that's exactly the kind of extra
+  // step that was costing real conversions before autoStart replaced
+  // the old Ready/Start gate. Shares the same first-few-rooms gating as
+  // the hotspot hint, but hides itself on a fixed timer regardless of
+  // whether anything's been tapped yet.
+  useEffect(() => {
+    if (!showHotspotHint) return
+    setShowStartHint(true)
+    const id = setTimeout(() => setShowStartHint(false), 3000)
+    return () => clearTimeout(id)
+  }, [showHotspotHint, questionIndex])
   const isLastQuestion = questionIndex === lesson.questions.length - 1
   const QuizVisual = question.visual ?? Outlet
 
@@ -377,7 +426,20 @@ export default function Lesson({
               )
             ) : (
               <>
-                <Scene onTap={handleTap} foundIds={foundIds} showHint={showHotspotHint} />
+                <div className="relative">
+                  <Scene onTap={handleTap} foundIds={foundIds} showHint={showHotspotHint} />
+                  <div
+                    className="absolute left-1/2 top-3 -translate-x-1/2 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap pointer-events-none"
+                    style={{
+                      background: 'rgba(20,20,20,0.85)',
+                      color: '#fff',
+                      opacity: showStartHint ? 1 : 0,
+                      transition: 'opacity 400ms ease-out',
+                    }}
+                  >
+                    👆 Tap anything that looks wrong
+                  </div>
+                </div>
                 {allFound && (
                   <div
                     className="pop-in mt-4 rounded-xl p-4 text-sm"
